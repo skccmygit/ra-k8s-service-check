@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sapbss-pjt-template
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sapbss-pjt-template
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: sapbss-pjt-template
+    spec:
+      containers:
+      - name: sapbss-pjt-template
+        image: 590183920582.dkr.ecr.ap-northeast-2.amazonaws.com/sample/sapbss-pjt-template:1.0.0-SNAPSHOT
+        ports:
+        - containerPort: 4567

@@ -1,0 +1,101 @@
+name: Deploy to Development Environment
+
+on:
+  push:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+env:
+  _PROJECT_NAME: "k8s-service-check"
+  _SERVICE_NAME: "k8s-service-check"
+  _NAME_SPACE: "default"
+  _ENV: "-dev"
+  _REGISTRY_DEF: "sample"
+  AKS_CLUSTER_NAME: dev-bss-aks
+  ACR_NAME: "yourdevacr"  # Azure Container Registry 이름
+  RESOURCE_GROUP: "your-resource-group"  # Azure Resource Group 이름
+
+  _DOCKER_FILE_NAME: "Dockerfile"
+  DEFAULT_IMAGE_TAG: "1.0.0-SNAPSHOT"
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest    # GitHub-hosted runner 사용
+    
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Set Image Tag
+      run: |
+        echo "IMAGE_TAG=${DEFAULT_IMAGE_TAG}.$(date +'%Y%m%d').${{ github.run_number }}" >> $GITHUB_ENV
+
+    - name: Build with Maven
+      run: |
+        mvn -s ~/.m2/settings.xml deploy
+        mvn -s ~/.m2/settings.xml clean package
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Login to Azure Container Registry
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ env.ACR_NAME }}.azurecr.io
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
+
+    - name: Build and push Docker image
+      run: |
+        docker build -f ${{ env._DOCKER_FILE_NAME }} \
+          -t ${{ env.ACR_NAME }}.azurecr.io/${{ env._REGISTRY_DEF }}/${{ env._SERVICE_NAME }}:${{ env.IMAGE_TAG }} .
+        docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env._REGISTRY_DEF }}/${{ env._SERVICE_NAME }}:${{ env.IMAGE_TAG }}
+    
+    # 다음 job에서 사용할 이미지 태그를 outputs으로 저장
+    outputs:
+      image_tag: ${{ env.IMAGE_TAG }}
+
+  deploy-to-aks:
+    needs: build-and-push    # 이전 job이 완료된 후 실행
+    runs-on: self-hosted     # Self-hosted runner 사용
+    
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install kubectl
+      run: |
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        chmod +x kubectl
+        sudo mv kubectl /usr/local/bin/
+
+    - name: Install Helm
+      run: |
+        curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Configure AKS Credentials
+      uses: azure/aks-set-context@v3
+      with:
+        resource-group: ${{ env.RESOURCE_GROUP }}
+        cluster-name: ${{ env.AKS_CLUSTER_NAME }}
+
+    - name: Deploy to AKS
+      run: |
+        helm upgrade --install ${{ env._SERVICE_NAME }} helm \
+          -f helm/values${{ env._ENV }}.yaml \
+          --namespace ${{ env._NAME_SPACE }} \
+          --set image.repository=${{ env.ACR_NAME }}.azurecr.io/${{ env._REGISTRY_DEF }}/${{ env._SERVICE_NAME }} \
+          --set image.tag=${{ needs.build-and-push.outputs.image_tag }}
+
