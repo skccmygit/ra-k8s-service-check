@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copy pre-built JAR
-COPY target/k8sExample-jar-with-dependencies.jar app.jar
+COPY target/ra-k8s-service-check-jar-with-dependencies.jar app.jar
 RUN jar tvf app.jar | grep -E "templates/|public/" || echo "Warning: Resources might be missing"
 
 # Set ownership and switch user
@@ -40,7 +40,6 @@ HEALTHCHECK --interval=30s --timeout=3s \
 
 # Start app
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS \
-    -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE} \
     -Duser.language=ko \
     -Duser.country=KR \
     -jar app.jar"]
