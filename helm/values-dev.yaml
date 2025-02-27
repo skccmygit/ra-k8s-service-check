@@ -1,0 +1,52 @@
+fullnameOverride: "k8s-service-check"
+runtimeEnv: "dev"
+clusterName: skcc-newkm-dev-aks
+replicaCount: 2
+image:
+  repository: newkmacr.azurecr.io/k8s-service-check
+  pullPolicy: Always
+  tag: 1.0.0-SNAPSHOT
+service:
+  type: ClusterIP  # 일반적인 경우는 ClusterIP 로 설정해야 함. 본 경우는 포트 지정하는 특수한 경우의 예임
+  # type: ClusterIP
+  port: 80
+  targetPort: 4567
+  # nodePort: 31000  # NodePort type 인 경우만 중복되지 않게 지정하고 ClusterIP인 경우는 삭제함
+autoscaler:
+  maxReplicas: 2
+  minReplicas: 1
+  targetCPUUtilizationPercentage: 30
+liveness:
+  initialDelaySeconds: 50
+  periodSeconds: 15
+readiness:
+  initialDelaySeconds: 50
+  periodSeconds: 10
+  timeoutSeconds: 3
+  successThreshold: 1
+  failureThreshold: 2 
+          
+resources:
+  requests:
+    cpu: 300m
+    memory: 256Mi
+  limits:
+    cpu: 300m
+    memory: 256Mi
+
+ingress:
+  port: 80
+  host: dev-check.skcc.com
+
+secret:
+  data:
+    db1_username: YWRtaW4=
+    db1_password: MWYyZDFlMmU2N2Rm  
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+

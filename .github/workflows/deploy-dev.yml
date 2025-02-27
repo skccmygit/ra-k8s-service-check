@@ -10,7 +10,6 @@ env:
   _SERVICE_NAME: "k8s-service-check"
   _NAME_SPACE: "default"
   _ENV: "-dev"
-  _REGISTRY_DEF: "sample"
   K8S_CLUSTER_NAME: skcc-newkm-dev-aks
 
   _DOCKER_FILE_NAME: "Dockerfile"
@@ -25,7 +24,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-          
+
     steps:
     - uses: actions/checkout@v3
 
@@ -38,7 +37,7 @@ jobs:
     
     - name: Set Image Tag
       run: |
-        echo "IMAGE_TAG=${DEFAULT_IMAGE_TAG}.$(date +'%Y%m%d').${{ github.run_number }}" >> $GITHUB_ENV
+        echo "IMAGE_TAG=${IMAGE_TAG}.$(date +'%Y%m%d').${{ github.run_number }}" >> $GITHUB_ENV
 
     - name: Build with Maven
       env:
@@ -57,7 +56,7 @@ jobs:
       
     - name: Pull latest image for caching
       run: |
-        docker pull ${{ env.REGISTRY }}/${{ env._SERVICE_NAME }}:latest || true
+        docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest || true
         DOCKER_BUILDKIT=1
 
     - name: Set up Docker Buildx
@@ -77,39 +76,57 @@ jobs:
           type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
         cache-to: type=inline        
 
-    # 다음 job에서 사용할 이미지 태그를 outputs으로 저장
-    outputs:
-      image_tag: ${{ env.IMAGE_TAG }}
+    - name: Upload manifests
+      uses: actions/upload-artifact@v4
+      with:
+        name: manifests-helm
+        path: helm/
+
 
   deploy-to-aks:
     needs: build-and-push    # 이전 job이 완료된 후 실행
     runs-on: newkm-selfhost      # Self-hosted runner 사용
-    
+    environment: newkm-dev-env
     steps:
-    - uses: actions/checkout@v3
+      - name: Download manifests
+        uses: actions/download-artifact@v4
+        with:
+          name: manifests-helm
+          path: helm/
 
-    - name: Install kubectl
-      run: |
-        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-        chmod +x kubectl
-        sudo mv kubectl /usr/local/bin/
+      
+      - name: Set up kubeconfig
+        uses: azure/k8s-set-context@v1
+        with:
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
 
-    - name: Install Helm
-      run: |
-        curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+      - name: Deploy to AKS
+        run: |
+          helm upgrade --install ${{ env._SERVICE_NAME }} helm \
+            -f helm/values${{ env._ENV }}.yaml \
+            --namespace ${{ env._NAME_SPACE }} \
+            --set image.repository=${{ env.REGISTRY }}.azurecr.io/${{ env.IMAGE_NAME }} \
+            --set image.tag=${{ env.IMAGE_TAG }}
+  
+      # steps:
+      # - uses: actions/checkout@v3
+      # - name: Install kubectl
+      #   run: |
+      #     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      #     chmod +x kubectl
+      #     sudo mv kubectl /usr/local/bin/
 
+      # - name: Install Helm
+      #   run: |
+      #     curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
-    - name: Configure AKS Credentials
-      uses: azure/aks-set-context@v3
-      with:
-        resource-group: ${{ env.RESOURCE_GROUP }}
-        cluster-name: ${{ env.AKS_CLUSTER_NAME }}
+      # - name: Deploy to Kubernetes
+      #   uses: Azure/k8s-deploy@v4.10
+      #   with:
+      #     namespace: newkm
+      #     manifests: |
+      #       ./manifests/deploy-newkm-landscape-dev.yaml
+      #     images: |
+      #       ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
 
-    - name: Deploy to AKS
-      run: |
-        helm upgrade --install ${{ env._SERVICE_NAME }} helm \
-          -f helm/values${{ env._ENV }}.yaml \
-          --namespace ${{ env._NAME_SPACE }} \
-          --set image.repository=${{ env.ACR_NAME }}.azurecr.io/${{ env._REGISTRY_DEF }}/${{ env._SERVICE_NAME }} \
-          --set image.tag=${{ needs.build-and-push.outputs.image_tag }}
 

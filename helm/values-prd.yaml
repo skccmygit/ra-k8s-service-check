@@ -1,0 +1,49 @@
+fullnameOverride: "sapbss-pjt-template"
+runtimeEnv: "prd"
+clusterName: prd-bss-eks
+replicaCount: 2
+image:
+  repository: 851725410089.dkr.ecr.ap-northeast-2.amazonaws.com/prd/erpbss/sapbss-pjt-template
+  pullPolicy: Always
+  tag: latest
+service:
+  type: ClusterIP  # 일반적인 경우는 ClusterIP 로 설정해야 함. 본 경우는 포트 지정하는 특수한 경우의 예임
+  port: 80
+  targetPort: 4567
+  # nodePort: 31000  # NodePort type 인 경우만 중복되지 않게 지정하고 ClusterIP인 경우는 삭제함
+autoscaler:
+  maxReplicas: 1
+  minReplicas: 1
+  targetCPUUtilizationPercentage: 30
+liveness:
+  initialDelaySeconds: 50
+  periodSeconds: 15
+readiness:
+  initialDelaySeconds: 50
+  periodSeconds: 10
+  timeoutSeconds: 3
+  successThreshold: 1
+  failureThreshold: 2 
+          
+resources:
+  requests:
+    cpu: 300m
+    memory: 256Mi
+  limits:
+    cpu: 300m
+    memory: 256Mi
+
+ingress:
+  port: 80
+  host: dev-template.skshieldus.com
+
+secret:
+  data:
+    db1_username: YWRtaW4=
+    db1_password: MWYyZDFlMmU2N2Rm 
+    
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

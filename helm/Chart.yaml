@@ -1,0 +1,4 @@
+apiVersion: v2
+description: sapbss-pjt-template Helm Chart
+name: sapbss-pjt-template
+version: v0.0.1

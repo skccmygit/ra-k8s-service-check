@@ -1,0 +1,51 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.fullnameOverride }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: {{ .Values.fullnameOverride }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.fullnameOverride }}
+      annotations:
+        redeployOnChange: {{ .Values.image.tag }}  
+         
+    spec:
+      containers:
+        - name: {{ .Values.fullnameOverride }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          resources:
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }} 
+              memory: {{ .Values.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
+          ports:
+          - containerPort: {{ .Values.service.targetPort }}
+          env:
+            - name: CLUSTER_ENV
+              value: {{ .Values.runtimeEnv }}
+            - name: CLUSTER_NAME
+              value: {{ .Values.clusterName }}
+            - name: db1_username
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.fullnameOverride }}
+                  key: db1_username  
+            - name: db1_password
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.fullnameOverride }}
+                  key: db1_password  
+      terminationGracePeriodSeconds: 10
