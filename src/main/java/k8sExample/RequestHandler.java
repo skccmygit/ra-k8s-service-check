@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import com.google.gson.Gson;
 
 public class RequestHandler {
     private final NetworkCommandExecutor commandExecutor;
@@ -40,24 +42,45 @@ public class RequestHandler {
 
     public Object handleNetcat(Request req, Response res) {
         res.type("application/json");
-        String ip = req.queryParams("ip");
-        String port = req.queryParams("port");
-        String command = String.format("nc -zv %s %s", ip, port);
-        return commandExecutor.execute(command);
+        try {
+            String body = req.body();
+            Map<String, String> params = new Gson().fromJson(body, Map.class);
+            String ip = params.get("ip");
+            String port = params.get("port");
+            String command = String.format("nc -zv %s %s", ip, port);
+            return commandExecutor.execute(command);
+        } catch (Exception e) {
+            res.status(400);
+            return "{\"error\":\"Invalid request parameters\"}";
+        }
     }
 
     public Object handleNslookup(Request req, Response res) {
         res.type("application/json");
-        String url = req.queryParams("url");
-        String command = String.format("nslookup %s", url);
-        return commandExecutor.execute(command);
+        try {
+            String body = req.body();
+            Map<String, String> params = new Gson().fromJson(body, Map.class);
+            String url = params.get("url");
+            String command = String.format("nslookup %s", url);
+            return commandExecutor.execute(command);
+        } catch (Exception e) {
+            res.status(400);
+            return "{\"error\":\"Invalid request parameters\"}";
+        }
     }
 
     public Object handleCurl(Request req, Response res) {
         res.type("application/json");
-        String url = req.queryParams("url");
-        String command = String.format("curl -v %s", url);
-        return commandExecutor.execute(command);
+        try {
+            String body = req.body();
+            Map<String, String> params = new Gson().fromJson(body, Map.class);
+            String url = params.get("url");
+            String command = String.format("curl -v %s", url);
+            return commandExecutor.execute(command);
+        } catch (Exception e) {
+            res.status(400);
+            return "{\"error\":\"Invalid request parameters\"}";
+        }
     }
 
     public Object handleMessage(Request req, Response res) {

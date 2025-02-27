@@ -82,12 +82,12 @@ public class NetworkDiagnosticServer {
         // checkutil 경로 아래의 모든 라우트 설정
         path("/checkutil", () -> {
             get("", (req, res) -> {
-                System.out.println("Handling checkutil root path");
+                System.out.println("Handling root path");
                 return requestHandler.handleHome(req, res);
             });
             
             get("/", (req, res) -> {
-                System.out.println("Handling checkutil root path with slash");
+                System.out.println("Handling root path with slash");
                 return requestHandler.handleHome(req, res);
             });
             
