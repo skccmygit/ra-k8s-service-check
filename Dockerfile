@@ -1,10 +1,4 @@
-# Build stage
-FROM eclipse-temurin:17-jdk-jammy AS builder
-WORKDIR /build
-COPY . .
-RUN ./mvnw clean package -DskipTests
-
-# Run stage 
+# Run stage only
 FROM eclipse-temurin:17-jre-jammy
 
 # Create non-root user
@@ -21,8 +15,8 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Copy JAR from builder stage
-COPY --from=builder /build/target/k8sExample-jar-with-dependencies.jar app.jar
+# Copy pre-built JAR
+COPY target/k8sExample-jar-with-dependencies.jar app.jar
 RUN jar tvf app.jar | grep -E "templates/|public/" || echo "Warning: Resources might be missing"
 
 # Set ownership and switch user

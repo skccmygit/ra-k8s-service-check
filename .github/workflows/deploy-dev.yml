@@ -1,136 +1,57 @@
-name: Deploy to Development Environment
+name: Build and Deploy
 
 on:
   push:
-    branches: [ main, develop ]
-  workflow_dispatch:
-
-env:
-  _PROJECT_NAME: "k8s-service-check"
-  _SERVICE_NAME: "k8s-service-check"
-  _NAME_SPACE: "default"
-  _ENV: "-dev"
-  K8S_CLUSTER_NAME: skcc-newkm-dev-aks
-
-  _DOCKER_FILE_NAME: "Dockerfile"
-  REGISTRY: newkmacr.azurecr.io
-  IMAGE_NAME: "k8s-service-check"
-  DEFAULT_IMAGE_TAG: 1.0.0-SNAPSHOT
-
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  build-and-push:
-    runs-on: newkm-selfhost    # GitHub-hosted runner 사용
-    permissions:
-      contents: read
-      packages: write
-
+  build:
+    runs-on: ubuntu-latest
+    
     steps:
     - uses: actions/checkout@v3
-
-    - name: Set up JDK
+    
+    - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
     
-    - name: Set Image Tag
-      run: |
-        echo "IMAGE_TAG=${DEFAULT_IMAGE_TAG}.$(date +'%Y%m%d').${{ github.run_number }}" >> $GITHUB_ENV
-
     - name: Build with Maven
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        mvn -s ~/.m2/settings.xml deploy
-        mvn -s ~/.m2/settings.xml clean package
-
-
-    - name: Azure Container Registry 로그인
-      uses: azure/docker-login@v2
+      run: mvn clean package -DskipTests
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
       with:
-        login-server: ${{ env.REGISTRY }}
-        username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
-        password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
-      
-    - name: Pull latest image for caching
-      run: |
-        docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest || true
-        DOCKER_BUILDKIT=1
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+    
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+    
     - name: Build and push Docker image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        file: ./Dockerfile
-        push: true
-        tags: |
-          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
-          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-        cache-from: |
-          type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.DEFAULT_IMAGE_TAG }}
-        cache-to: type=inline        
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
-    - name: Upload manifests
-      uses: actions/upload-artifact@v4
-      with:
-        name: manifests-helm
-        path: helm/
-
-    # 다음 job에서 사용할 이미지 태그를 outputs으로 저장
-    outputs:
-      image_tag: ${{ env.IMAGE_TAG }}
-
-  deploy-to-aks:
-    needs: build-and-push    # 이전 job이 완료된 후 실행
-    runs-on: newkm-selfhost      # Self-hosted runner 사용
-    environment: newkm-dev-env
-    steps:
-      - name: Download manifests
-        uses: actions/download-artifact@v4
-        with:
-          name: manifests-helm
-          path: helm/
-
-      
-      - name: Set up kubeconfig
-        uses: azure/k8s-set-context@v1
-        with:
-          kubeconfig: ${{ secrets.KUBE_CONFIG }}
-
-      - name: Deploy to AKS
-        run: |
-          echo image tag: ${{ env.IMAGE_TAG }}
-          helm upgrade --install ${{ env._SERVICE_NAME }} helm \
-            -f helm/values${{ env._ENV }}.yaml \
-            --namespace ${{ env._NAME_SPACE }} \
-            --set image.repository=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} \
-            --set image.tag=${{ needs.build-and-push.outputs.image_tag }}
-  
-      # steps:
-      # - uses: actions/checkout@v3
-      # - name: Install kubectl
-      #   run: |
-      #     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-      #     chmod +x kubectl
-      #     sudo mv kubectl /usr/local/bin/
-
-      # - name: Install Helm
-      #   run: |
-      #     curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-
-      # - name: Deploy to Kubernetes
-      #   uses: Azure/k8s-deploy@v4.10
-      #   with:
-      #     namespace: newkm
-      #     manifests: |
-      #       ./manifests/deploy-newkm-landscape-dev.yaml
-      #     images: |
-      #       ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+    # Deploy to k8s cluster
+    - name: Deploy to Kubernetes
+      run: |
+        aws eks update-kubeconfig --name ${{ env.CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
+        helm upgrade --install ${{ env.SERVICE_NAME }} helm \
+          -f helm/values-dev.yaml \
+          --namespace ${{ env.NAMESPACE }} \
+          --set image.repository=$ECR_REGISTRY/$ECR_REPOSITORY \
+          --set image.tag=$IMAGE_TAG
 
 
