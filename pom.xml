@@ -23,8 +23,18 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.sparkjava</groupId><artifactId>spark-core</artifactId><version>${spark.version}</version>
+      <groupId>com.sparkjava</groupId>
+      <artifactId>spark-core</artifactId>
+      <version>${spark.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
+    
+    <!-- Jetty dependencies -->
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
@@ -45,10 +55,12 @@
       <artifactId>websocket-servlet</artifactId>
       <version>${jetty.version}</version>
     </dependency>
+    
+    <!-- Logging dependencies -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>${slf4j.version}</version>
+      <version>1.7.32</version>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
@@ -134,7 +146,6 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>17</java.version>
     <jetty.version>9.4.48.v20220622</jetty.version>
-    <slf4j.version>1.7.25</slf4j.version>
     <logback.version>1.2.11</logback.version>
     <spark.version>2.9.4</spark.version>
   </properties>
