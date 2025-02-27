@@ -2,6 +2,7 @@ package k8sExample;
 
 import static spark.Spark.*;
 import java.time.LocalDateTime;
+import javax.servlet.http.HttpServletResponse;
 
 public class NetworkDiagnosticServer {
     private final ServerConfig config;
@@ -25,9 +26,13 @@ public class NetworkDiagnosticServer {
         threadPool(8, 2, 30000);
         staticFiles.location("/public");
         
-        // Set timeout to 10 seconds
+        // Set response timeout using proper Spark/Servlet methods
         before((request, response) -> {
-            response.raw().setTimeoutHeader(10 * 1000); // 10 seconds in milliseconds
+            if (response.raw() instanceof HttpServletResponse) {
+                HttpServletResponse raw = response.raw();
+                raw.setHeader("Connection", "keep-alive");
+                raw.setHeader("Keep-Alive", "timeout=10");
+            }
         });
         
         enableCORS();
