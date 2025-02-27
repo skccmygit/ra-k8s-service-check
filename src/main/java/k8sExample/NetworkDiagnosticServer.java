@@ -27,10 +27,29 @@ public class NetworkDiagnosticServer {
         port(config.getPort());
         threadPool(8, 2, 30000);
         
-        // 정적 파일 설정 수정
-        staticFiles.location("/public");
+        // 정적 파일 위치 설정
+        staticFiles.location("/static");
         staticFiles.header("Access-Control-Allow-Origin", "*");
-        staticFiles.expireTime(600);
+        
+        // 기본 경로 설정
+        get("/checkutil", requestHandler::handleHome);
+        get("/checkutil/", requestHandler::handleHome);
+        
+        // 정적 리소스 경로 수정 - 직접적인 정적 파일 처리는 Spark의 staticFiles 설정에 의해 처리됨
+        get("/checkutil/css/*", (req, res) -> {
+            res.type("text/css");
+            return null;  // staticFiles 설정이 자동으로 처리
+        });
+        
+        get("/checkutil/js/*", (req, res) -> {
+            res.type("application/javascript");
+            return null;  // staticFiles 설정이 자동으로 처리
+        });
+        
+        get("/checkutil/health", requestHandler::handleHealthCheck);
+        post("/checkutil/netcat", requestHandler::handleNetcat);
+        post("/checkutil/nslookup", requestHandler::handleNslookup);
+        post("/checkutil/curl", requestHandler::handleCurl);
         
         // context path 설정
         before((request, response) -> {
