@@ -28,7 +28,8 @@ public class NetworkDiagnosticServer {
         threadPool(8, 2, 30000);
         
         // 정적 파일 설정 수정
-        staticFiles.location("/public");  // 클래스패스 내의 public 디렉토리 사용
+        staticFiles.location("/public");
+        staticFiles.externalLocation("/app/public");  // 추가: 외부 정적 파일도 지원
         staticFiles.header("Access-Control-Allow-Origin", "*");
         staticFiles.expireTime(600);
         
@@ -80,8 +81,15 @@ public class NetworkDiagnosticServer {
     }
 
     private void setupRoutes() {
+        // 기본 경로 리다이렉션 추가
+        get("/", (req, res) -> {
+            res.redirect("/checkutil");
+            return null;
+        });
+
         get("/checkutil", (req, res) -> {
             System.out.println("Handling /checkutil path");
+            res.type("text/html");  // 명시적으로 컨텐츠 타입 설정
             return requestHandler.handleHome(req, res);
         });
         
@@ -90,15 +98,17 @@ public class NetworkDiagnosticServer {
             return requestHandler.handleHome(req, res);
         });
         
-        // 정적 리소스 경로 추가
+        // 정적 리소스 경로 수정
         get("/checkutil/css/*", (req, res) -> {
+            String file = req.splat()[0];
             res.type("text/css");
-            return null;
+            return staticFiles.consumeResource("css/" + file);
         });
         
         get("/checkutil/js/*", (req, res) -> {
+            String file = req.splat()[0];
             res.type("application/javascript");
-            return null;
+            return staticFiles.consumeResource("js/" + file);
         });
         
         get("/checkutil/health", requestHandler::handleHealthCheck);
