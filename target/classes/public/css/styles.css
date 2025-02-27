@@ -20,4 +20,15 @@ button {
     margin-top: 10px; 
     white-space: pre-wrap; 
     font-family: monospace; 
+}
+
+.loading {
+    margin-top: 10px;
+    color: #666;
+    font-style: italic;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 } 

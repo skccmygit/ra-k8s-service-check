@@ -24,6 +24,12 @@ public class NetworkDiagnosticServer {
         port(config.getPort());
         threadPool(8, 2, 30000);
         staticFiles.location("/public");
+        
+        // Set timeout to 10 seconds
+        before((request, response) -> {
+            response.raw().setTimeoutHeader(10 * 1000); // 10 seconds in milliseconds
+        });
+        
         enableCORS();
         configureCompression();
         setupGracefulShutdown();

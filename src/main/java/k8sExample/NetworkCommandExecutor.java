@@ -12,16 +12,17 @@ public class NetworkCommandExecutor {
 
     public String execute(String command) {
         if (!isValidCommand(command)) {
-            return formatOutput("Invalid command or parameters");
+            return formatOutput("Invalid command");
         }
 
         try {
             ProcessBuilder processBuilder = createProcessBuilder(command);
             Process process = processBuilder.start();
             
-            if (!process.waitFor(10, TimeUnit.SECONDS)) {
+            boolean completed = process.waitFor(10, TimeUnit.SECONDS);
+            if (!completed) {
                 process.destroyForcibly();
-                return formatOutput("Command timed out");
+                return formatOutput("Command timed out after 10 seconds");
             }
 
             String output = readProcessOutput(process);
