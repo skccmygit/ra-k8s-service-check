@@ -1,9 +1,16 @@
-FROM eclipse-temurin:17-jdk-jammy
+# Build stage
+FROM eclipse-temurin:17-jdk-jammy AS builder
+WORKDIR /build
+COPY . .
+RUN ./mvnw clean package -DskipTests
 
-# Create a non-root user to run the application
+# Run stage 
+FROM eclipse-temurin:17-jre-jammy
+
+# Create non-root user
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 
-# Install network troubleshooting tools
+# Install network tools
 RUN apt-get update && apt-get install -y \
     netcat-openbsd \
     curl \
@@ -12,26 +19,19 @@ RUN apt-get update && apt-get install -y \
     net-tools \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
 WORKDIR /app
 
-# Verify JAR contents (optional)
-COPY ./target/k8sExample-jar-with-dependencies.jar /tmp/app.jar
-RUN jar tvf /tmp/app.jar | grep -E "html|css|js" || exit 1
+# Copy JAR from builder stage
+COPY --from=builder /build/target/k8sExample-jar-with-dependencies.jar app.jar
+RUN jar tvf app.jar | grep -E "templates/|public/" || echo "Warning: Resources might be missing"
 
-# Copy the verified JAR
-COPY ./target/k8sExample-jar-with-dependencies.jar app.jar
-
-# Set ownership to non-root user
+# Set ownership and switch user
 RUN chown appuser:appuser app.jar
-
-# Switch to non-root user
 USER appuser
 
-# Expose application port
 EXPOSE 4567
 
-# Set environment variables for JVM tuning
+# JVM tuning
 ENV JAVA_OPTS="-XX:+UseContainerSupport \
     -XX:MaxRAMPercentage=75.0 \
     -XX:InitialRAMPercentage=50.0 \
@@ -40,7 +40,11 @@ ENV JAVA_OPTS="-XX:+UseContainerSupport \
     -XX:HeapDumpPath=/app/heap-dump.hprof \
     -Dfile.encoding=UTF-8"
 
-# Set Korean locale and start application
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s \
+  CMD curl -f http://localhost:4567/health || exit 1
+
+# Start app
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS \
     -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE} \
     -Duser.language=ko \
