@@ -28,37 +28,32 @@ public class NetworkDiagnosticServer {
         threadPool(8, 2, 30000);
         
         // 정적 파일 위치 설정
-        staticFiles.location("/static");
+        staticFiles.location("/public");
         staticFiles.header("Access-Control-Allow-Origin", "*");
         
         // 기본 경로 설정
-        get("/checkutil", requestHandler::handleHome);
-        get("/checkutil/", requestHandler::handleHome);
-        
-        // 정적 리소스 경로 수정 - 직접적인 정적 파일 처리는 Spark의 staticFiles 설정에 의해 처리됨
-        get("/checkutil/css/*", (req, res) -> {
-            res.type("text/css");
-            return null;  // staticFiles 설정이 자동으로 처리
+        get("/", (req, res) -> {
+            res.redirect("/checkutil");
+            return null;
+        });
+
+        get("/checkutil", (req, res) -> {
+            System.out.println("Handling /checkutil path");
+            res.type("text/html");
+            return requestHandler.handleHome(req, res);
         });
         
-        get("/checkutil/js/*", (req, res) -> {
-            res.type("application/javascript");
-            return null;  // staticFiles 설정이 자동으로 처리
-        });
-        
+        // API 엔드포인트 설정
         get("/checkutil/health", requestHandler::handleHealthCheck);
         post("/checkutil/netcat", requestHandler::handleNetcat);
         post("/checkutil/nslookup", requestHandler::handleNslookup);
         post("/checkutil/curl", requestHandler::handleCurl);
         
-        // context path 설정
+        // CORS 및 응답 헤더 설정
         before((request, response) -> {
-            String path = request.pathInfo();
-            System.out.println("Incoming request path: " + path);
-        });
-        
-        // Set response timeout
-        before((request, response) -> {
+            response.header("Access-Control-Allow-Origin", "*");
+            response.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+            response.header("Access-Control-Allow-Headers", "*");
             if (response.raw() instanceof HttpServletResponse) {
                 HttpServletResponse raw = response.raw();
                 raw.setHeader("Connection", "keep-alive");
