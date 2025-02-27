@@ -12,7 +12,7 @@ async function executeCommand(command, params) {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-        const response = await fetch(`/${command}`, {
+        const response = await fetch(`/checkutil/${command}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(params),

@@ -25,8 +25,8 @@ public class NetworkDiagnosticServer {
         port(config.getPort());
         threadPool(8, 2, 30000);
         
-        // 정적 파일의 기본 경로를 /checkutil 아래로 설정
-        staticFiles.externalLocation("/public");
+        // 정적 파일의 경로를 /checkutil 아래로 설정
+        staticFiles.location("/public");
         staticFiles.header("X-Content-Type-Options", "nosniff");
         
         // 모든 요청에 대해 /checkutil 프리픽스 추가
