@@ -36,7 +36,7 @@ ENV JAVA_OPTS="-XX:+UseContainerSupport \
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s \
-  CMD curl -f http://localhost:4567/health || exit 1
+  CMD curl -f http://localhost:4567/checkutil/health || exit 1
 
 # Start app
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS \

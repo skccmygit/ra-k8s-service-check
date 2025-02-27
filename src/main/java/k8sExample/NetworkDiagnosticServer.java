@@ -28,18 +28,11 @@ public class NetworkDiagnosticServer {
         threadPool(8, 2, 30000);
         
         // 정적 파일 설정 수정
-        staticFiles.externalLocation("src/main/resources/public");  // 외부 경로 설정
+        staticFiles.location("/public");  // 클래스패스 내의 public 디렉토리 사용
         staticFiles.header("Access-Control-Allow-Origin", "*");
         staticFiles.expireTime(600);
         
         // context path 설정
-        before((request, response) -> {
-            if (!request.pathInfo().startsWith("/checkutil")) {
-                response.redirect("/checkutil" + request.pathInfo());
-            }
-        });
-        
-        // before 필터 수정 - 리다이렉트 로직 제거
         before((request, response) -> {
             String path = request.pathInfo();
             System.out.println("Incoming request path: " + path);
@@ -87,38 +80,31 @@ public class NetworkDiagnosticServer {
     }
 
     private void setupRoutes() {
-        get("/", (req, res) -> {
-            res.redirect("/checkutil");
+        get("/checkutil", (req, res) -> {
+            System.out.println("Handling /checkutil path");
+            return requestHandler.handleHome(req, res);
+        });
+        
+        get("/checkutil/", (req, res) -> {
+            System.out.println("Handling /checkutil/ path");
+            return requestHandler.handleHome(req, res);
+        });
+        
+        // 정적 리소스 경로 추가
+        get("/checkutil/css/*", (req, res) -> {
+            res.type("text/css");
             return null;
         });
-
-        path("/checkutil", () -> {
-            get("", (req, res) -> {
-                System.out.println("Handling root path");
-                return requestHandler.handleHome(req, res);
-            });
-            
-            get("/", (req, res) -> {
-                System.out.println("Handling root path with slash");
-                return requestHandler.handleHome(req, res);
-            });
-            
-            // 정적 리소스 경로 추가
-            get("/css/*", (req, res) -> {
-                res.type("text/css");
-                return null;
-            });
-            
-            get("/js/*", (req, res) -> {
-                res.type("application/javascript");
-                return null;
-            });
-            
-            get("/health", requestHandler::handleHealthCheck);
-            post("/netcat", requestHandler::handleNetcat);
-            post("/nslookup", requestHandler::handleNslookup);
-            post("/curl", requestHandler::handleCurl);
+        
+        get("/checkutil/js/*", (req, res) -> {
+            res.type("application/javascript");
+            return null;
         });
+        
+        get("/checkutil/health", requestHandler::handleHealthCheck);
+        post("/checkutil/netcat", requestHandler::handleNetcat);
+        post("/checkutil/nslookup", requestHandler::handleNslookup);
+        post("/checkutil/curl", requestHandler::handleCurl);
     }
 
     private void setupErrorHandling() {
