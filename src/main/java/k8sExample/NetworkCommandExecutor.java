@@ -59,9 +59,22 @@ public class NetworkCommandExecutor {
             return false;
         }
 
-        return command.startsWith("nc -zv ") || 
-               command.startsWith("nslookup ") ||
-               command.startsWith("curl -v ");
+        // 허용되는 명령어 목록 확장
+        String[] allowedCommands = {
+            "nc -zv ",
+            "nslookup ",
+            "curl -v ",
+            "ping ",
+            "telnet ",
+            "dig "
+        };
+
+        for (String allowedCommand : allowedCommands) {
+            if (command.startsWith(allowedCommand)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String formatOutput(String output) {

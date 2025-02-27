@@ -3,7 +3,7 @@
 <head>
     <title>Network Diagnostic Tools</title>
     <link rel="stylesheet" href="/css/styles.css">
-    <script src="/js/main.js"></script>
+    <script src="/checkutil/js/main.js"></script>
 </head>
 <body>
     <h1>Network Diagnostic Tools</h1>
@@ -18,7 +18,7 @@
     
     <div class="tool-container">
         <h3>DNS Lookup Test</h3>
-        <input type="text" id="nslookup-url" placeholder="Domain name" style="width: 600px;">
+        <input type="text" id="nslookup-url" placeholder="Domain name" style="width: 500px;">
         <button onclick="runNslookup()" id="nslookup-btn">Lookup</button>
         <div class="loading" id="nslookup-loading" style="display:none">Looking up DNS...</div>
         <pre id="nslookup-result" class="result"></pre>
@@ -26,7 +26,7 @@
     
     <div class="tool-container">
         <h3>Curl Test</h3>
-        <input type="text" id="curl-url" placeholder="URL" style="width: 600px;">
+        <input type="text" id="curl-url" placeholder="URL" style="width: 500px;">
         <button onclick="runCurl()" id="curl-btn">Send Request</button>
         <div class="loading" id="curl-loading" style="display:none">Sending request...</div>
         <pre id="curl-result" class="result"></pre>
