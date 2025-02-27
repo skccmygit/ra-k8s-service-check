@@ -82,6 +82,9 @@ jobs:
         name: manifests-helm
         path: helm/
 
+    # 다음 job에서 사용할 이미지 태그를 outputs으로 저장
+    outputs:
+      image_tag: ${{ env.IMAGE_TAG }}
 
   deploy-to-aks:
     needs: build-and-push    # 이전 job이 완료된 후 실행
@@ -107,7 +110,7 @@ jobs:
             -f helm/values${{ env._ENV }}.yaml \
             --namespace ${{ env._NAME_SPACE }} \
             --set image.repository=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} \
-            --set image.tag=${{ env.IMAGE_TAG }}
+            --set image.tag=${{ needs.build-and-push.outputs.image_tag }}
   
       # steps:
       # - uses: actions/checkout@v3
