@@ -26,9 +26,24 @@
       <groupId>com.sparkjava</groupId><artifactId>spark-core</artifactId><version>2.9.4</version>
     </dependency>
     <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-server</artifactId>
+      <version>9.4.48.v20220622</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-webapp</artifactId>
+      <version>9.4.48.v20220622</version>
+    </dependency>
+    <dependency>
       <groupId>org.eclipse.jetty.websocket</groupId>
       <artifactId>websocket-server</artifactId>
-      <version>9.4.31.v20200723</version>
+      <version>9.4.48.v20220622</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty.websocket</groupId>
+      <artifactId>websocket-servlet</artifactId>
+      <version>9.4.48.v20220622</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
