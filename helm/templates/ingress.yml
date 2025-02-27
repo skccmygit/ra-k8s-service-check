@@ -31,11 +31,11 @@ spec:
     #             port:
     #               number:  {{ .Values.ingress.port }}
     - http:
-      paths:
-        - path: /checkpod(.*)
-          pathType: Prefix
-          backend:
-            service:
-              name: {{ .Values.fullnameOverride }}
-              port:
-                number:  {{ .Values.ingress.port }}                                     
+        paths:
+          - path: /checkpod(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.fullnameOverride }}
+                port:
+                  number:  {{ .Values.ingress.port }}                                     
