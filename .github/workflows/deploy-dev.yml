@@ -22,7 +22,10 @@ env:
 jobs:
   build-and-push:
     runs-on: newkm-selfhost    # GitHub-hosted runner 사용
-    
+    permissions:
+      contents: read
+      packages: write
+          
     steps:
     - uses: actions/checkout@v3
 
@@ -32,12 +35,14 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-
+    
     - name: Set Image Tag
       run: |
         echo "IMAGE_TAG=${DEFAULT_IMAGE_TAG}.$(date +'%Y%m%d').${{ github.run_number }}" >> $GITHUB_ENV
 
     - name: Build with Maven
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         mvn -s ~/.m2/settings.xml deploy
         mvn -s ~/.m2/settings.xml clean package
