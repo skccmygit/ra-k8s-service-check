@@ -31,25 +31,18 @@ public class NetworkDiagnosticServer {
         staticFiles.location("/public");
         staticFiles.expireTime(600);
         
-        // before 필터 수정
+        // before 필터 수정 - 리다이렉트 로직 제거
         before((request, response) -> {
             String path = request.pathInfo();
             System.out.println("Incoming request path: " + path);
-            
-            // 정적 파일이나 checkutil 경로는 리다이렉트하지 않음
-            if (!path.startsWith("/checkutil") && 
-                !path.contains(".js") && 
-                !path.contains(".css")) {
-                response.redirect("/checkutil" + path);
-            }
         });
         
-        // Set response timeout using proper Spark/Servlet methods
+        // Set response timeout
         before((request, response) -> {
             if (response.raw() instanceof HttpServletResponse) {
                 HttpServletResponse raw = response.raw();
                 raw.setHeader("Connection", "keep-alive");
-                raw.setHeader("Keep-Alive", "timeout=10");
+                raw.setHeader("Keep-Alive", "timeout=60");
             }
         });
         

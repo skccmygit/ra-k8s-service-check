@@ -17,15 +17,15 @@ autoscaler:
   minReplicas: 1
   targetCPUUtilizationPercentage: 30
 liveness:
-  initialDelaySeconds: 50
+  initialDelaySeconds: 30
   periodSeconds: 15
 readiness:
-  initialDelaySeconds: 50
+  initialDelaySeconds: 30
   periodSeconds: 10
-  timeoutSeconds: 3
+  timeoutSeconds: 5
   successThreshold: 1
-  failureThreshold: 2 
-          
+  failureThreshold: 3
+
 resources:
   requests:
     cpu: 200m
