@@ -27,11 +27,18 @@ USER appuser
 # Expose application port
 EXPOSE 4567
 
-# Set Korean locale through Java system properties
-ENTRYPOINT ["java", \
-    "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}", \
-    "-Duser.language=ko", \
-    "-Duser.country=KR", \
-    "-jar", \
-    "app.jar" \
-]
+# Set environment variables for JVM tuning
+ENV JAVA_OPTS="-XX:+UseContainerSupport \
+    -XX:MaxRAMPercentage=75.0 \
+    -XX:InitialRAMPercentage=50.0 \
+    -XX:+UseG1GC \
+    -XX:+HeapDumpOnOutOfMemoryError \
+    -XX:HeapDumpPath=/app/heap-dump.hprof \
+    -Dfile.encoding=UTF-8"
+
+# Set Korean locale and start application
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS \
+    -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE} \
+    -Duser.language=ko \
+    -Duser.country=KR \
+    -jar app.jar"]

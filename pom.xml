@@ -46,7 +46,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId><artifactId>maven-jar-plugin</artifactId><version>2.4</version>
         <configuration><finalName>k8sExample</finalName><archive><manifest>
-              <addClasspath>true</addClasspath><mainClass>k8sExample.HelloWorld</mainClass><classpathPrefix>dependency-jars/</classpathPrefix>
+              <addClasspath>true</addClasspath><mainClass>k8sExample.Application</mainClass><classpathPrefix>dependency-jars/</classpathPrefix>
             </manifest></archive>
         </configuration>
       </plugin>
@@ -63,7 +63,7 @@
             <configuration>
               <finalName>k8sExample</finalName>
               <descriptorRefs><descriptorRef>jar-with-dependencies</descriptorRef></descriptorRefs>
-              <archive><manifest><mainClass>k8sExample.HelloWorld</mainClass></manifest></archive>
+              <archive><manifest><mainClass>k8sExample.Application</mainClass></manifest></archive>
             </configuration>
           </execution>
         </executions>
