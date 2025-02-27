@@ -31,15 +31,16 @@ public class NetworkDiagnosticServer {
         staticFiles.location("/public");
         staticFiles.expireTime(600);
         
-        // before 필터 수정
+        // before 필터 수정 - 정적 파일 처리 개선
         before((request, response) -> {
             String path = request.pathInfo();
-            // 정적 파일 요청이나 이미 /checkutil로 시작하는 경우는 리다이렉트하지 않음
-            if (!path.startsWith("/checkutil") && 
-                !path.startsWith("/public") && 
-                !path.startsWith("/css") && 
-                !path.startsWith("/js")) {
-                response.redirect("/checkutil" + path);
+            System.out.println("Incoming request path: " + path); // 디버깅용 로그
+            
+            // /checkutil로 시작하지 않는 요청만 리다이렉트
+            if (!path.startsWith("/checkutil")) {
+                String newPath = "/checkutil" + path;
+                System.out.println("Redirecting to: " + newPath); // 디버깅용 로그
+                response.redirect(newPath);
             }
         });
         
@@ -86,13 +87,18 @@ public class NetworkDiagnosticServer {
 
     private void setupRoutes() {
         path("/checkutil", () -> {
-            get("/", requestHandler::handleHome);
-            get("", requestHandler::handleHome);  // 슬래시 없는 경우도 처리
+            get("/", (req, res) -> {
+                System.out.println("Handling root path: " + req.pathInfo()); // 디버깅용 로그
+                return requestHandler.handleHome(req, res);
+            });
+            get("", (req, res) -> {
+                System.out.println("Handling empty path: " + req.pathInfo()); // 디버깅용 로그
+                return requestHandler.handleHome(req, res);
+            });
             get("/health", requestHandler::handleHealthCheck);
             post("/netcat", requestHandler::handleNetcat);
             post("/nslookup", requestHandler::handleNslookup);
             post("/curl", requestHandler::handleCurl);
-            post("/message", requestHandler::handleMessage);
         });
     }
 

@@ -96,9 +96,17 @@ public class RequestHandler {
 
     private String loadHtmlTemplate() {
         try {
-            return new String(getClass().getResourceAsStream("/templates/index.html")
-                .readAllBytes(), StandardCharsets.UTF_8);
+            System.out.println("Loading HTML template"); // 디버깅용 로그
+            var inputStream = getClass().getResourceAsStream("/templates/index.html");
+            if (inputStream == null) {
+                throw new RuntimeException("Template file not found");
+            }
+            String template = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+            System.out.println("Template loaded successfully"); // 디버깅용 로그
+            return template;
         } catch (IOException e) {
+            System.err.println("Failed to load template: " + e.getMessage()); // 디버깅용 로그
+            e.printStackTrace();
             throw new RuntimeException("Failed to load HTML template", e);
         }
     }
