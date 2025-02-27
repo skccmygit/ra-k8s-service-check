@@ -26,8 +26,11 @@ public class RequestHandler {
 
     public Object handleHome(Request req, Response res) {
         try {
+            System.out.println("Handling home request: " + req.pathInfo());
             String serverInfo = generateServerInfo();
-            return String.format(htmlTemplate, serverInfo);
+            String result = String.format(htmlTemplate, serverInfo);
+            res.type("text/html");
+            return result;
         } catch (Exception e) {
             e.printStackTrace();
             res.status(500);

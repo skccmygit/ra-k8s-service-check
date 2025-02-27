@@ -16,23 +16,30 @@ public class NetworkDiagnosticServer {
     }
 
     public void start() {
+        System.out.println("Starting server on port " + config.getPort());
         configureServer();
         setupRoutes();
         setupErrorHandling();
+        System.out.println("Server started successfully");
     }
 
     private void configureServer() {
         port(config.getPort());
         threadPool(8, 2, 30000);
         
-        // 정적 파일의 경로를 /checkutil 아래로 설정
+        // 정적 파일 설정 수정
         staticFiles.location("/public");
-        staticFiles.header("X-Content-Type-Options", "nosniff");
+        staticFiles.expireTime(600);
         
-        // 모든 요청에 대해 /checkutil 프리픽스 추가
+        // before 필터 수정
         before((request, response) -> {
-            if (!request.pathInfo().startsWith("/checkutil")) {
-                response.redirect("/checkutil" + request.pathInfo());
+            String path = request.pathInfo();
+            // 정적 파일 요청이나 이미 /checkutil로 시작하는 경우는 리다이렉트하지 않음
+            if (!path.startsWith("/checkutil") && 
+                !path.startsWith("/public") && 
+                !path.startsWith("/css") && 
+                !path.startsWith("/js")) {
+                response.redirect("/checkutil" + path);
             }
         });
         
@@ -78,10 +85,10 @@ public class NetworkDiagnosticServer {
     }
 
     private void setupRoutes() {
-        // 모든 라우트에 /checkutil 프리픽스 추가
         path("/checkutil", () -> {
-            get("/health", requestHandler::handleHealthCheck);
             get("/", requestHandler::handleHome);
+            get("", requestHandler::handleHome);  // 슬래시 없는 경우도 처리
+            get("/health", requestHandler::handleHealthCheck);
             post("/netcat", requestHandler::handleNetcat);
             post("/nslookup", requestHandler::handleNslookup);
             post("/curl", requestHandler::handleCurl);

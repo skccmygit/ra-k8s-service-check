@@ -11,6 +11,9 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection "upgrade";
     nginx.ingress.kubernetes.io/websocket-services: {{ .Values.fullnameOverride }}
   labels:
     app: {{ .Values.fullnameOverride }}
@@ -37,10 +40,10 @@ spec:
     - host: {{ .Values.ingress.host }}
       http:
         paths:
-          - path: /checkutil(.*)
+          - path: /checkutil(/|$)(.*)
             pathType: Prefix
             backend:
               service:
                 name: {{ .Values.fullnameOverride }}
                 port:
-                  number:  {{ .Values.ingress.port }}                                     
+                  number: {{ .Values.ingress.port }}
