@@ -30,9 +30,10 @@ spec:
     #             name: {{ .Values.fullnameOverride }}
     #             port:
     #               number:  {{ .Values.ingress.port }}
-    - http:
+    - host: {{ .Values.ingress.host }}
+      http:
         paths:
-          - path: /checkpod(.*)
+          - path: /checkutil(.*)
             pathType: Prefix
             backend:
               service:

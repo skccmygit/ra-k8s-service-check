@@ -36,7 +36,7 @@ resources:
 
 ingress:
   port: 80
-  host: dev-check.skcc.com
+  host: tools-dev.skcc.com
 
 secret:
   data:
