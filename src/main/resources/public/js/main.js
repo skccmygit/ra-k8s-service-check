@@ -1,3 +1,20 @@
+// 함수들을 전역 스코프에 명시적으로 선언
+window.runNetcat = function() {
+    const ip = document.getElementById('nc-ip').value;
+    const port = document.getElementById('nc-port').value;
+    executeCommand('netcat', {ip, port});
+};
+
+window.runNslookup = function() {
+    const url = document.getElementById('nslookup-url').value;
+    executeCommand('nslookup', {url});
+};
+
+window.runCurl = function() {
+    const url = document.getElementById('curl-url').value;
+    executeCommand('curl', {url});
+};
+
 async function executeCommand(command, params) {
     const btnId = `${command}-btn`;
     const loadingId = `${command}-loading`;
@@ -34,20 +51,4 @@ async function executeCommand(command, params) {
         document.getElementById(btnId).disabled = false;
         document.getElementById(loadingId).style.display = 'none';
     }
-}
-
-function runNetcat() {
-    const ip = document.getElementById('nc-ip').value;
-    const port = document.getElementById('nc-port').value;
-    executeCommand('netcat', {ip, port});
-}
-
-function runNslookup() {
-    const url = document.getElementById('nslookup-url').value;
-    executeCommand('nslookup', {url});
-}
-
-function runCurl() {
-    const url = document.getElementById('curl-url').value;
-    executeCommand('curl', {url});
 } 

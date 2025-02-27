@@ -31,15 +31,17 @@ public class NetworkDiagnosticServer {
         staticFiles.location("/public");
         staticFiles.expireTime(600);
         
-        // before 필터 수정 - 정적 파일 처리 개선
+        // before 필터 수정 - 정적 파일 요청 처리 개선
         before((request, response) -> {
             String path = request.pathInfo();
-            System.out.println("Incoming request path: " + path); // 디버깅용 로그
+            System.out.println("Incoming request path: " + path);
             
-            // /checkutil로 시작하지 않는 요청만 리다이렉트
-            if (!path.startsWith("/checkutil")) {
+            // 정적 파일 요청은 리다이렉트하지 않음
+            if (!path.startsWith("/checkutil") && 
+                !path.contains(".js") && 
+                !path.contains(".css")) {
                 String newPath = "/checkutil" + path;
-                System.out.println("Redirecting to: " + newPath); // 디버깅용 로그
+                System.out.println("Redirecting to: " + newPath);
                 response.redirect(newPath);
             }
         });

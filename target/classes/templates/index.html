@@ -3,7 +3,17 @@
 <head>
     <title>Network Diagnostic Tools</title>
     <link rel="stylesheet" href="/checkutil/css/styles.css">
-    <script src="/checkutil/js/main.js"></script>
+    <script src="/checkutil/js/main.js" type="text/javascript"></script>
+    <script>
+        // 함수들이 전역 스코프에 있는지 확인
+        window.onload = function() {
+            console.log('Page loaded');
+            // 함수들이 정의되어 있는지 확인
+            console.log('runNetcat exists:', typeof runNetcat === 'function');
+            console.log('runNslookup exists:', typeof runNslookup === 'function');
+            console.log('runCurl exists:', typeof runCurl === 'function');
+        }
+    </script>
 </head>
 <body>
     <h1>Network Diagnostic Tools</h1>
