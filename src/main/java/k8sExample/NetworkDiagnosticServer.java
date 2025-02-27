@@ -24,7 +24,17 @@ public class NetworkDiagnosticServer {
     private void configureServer() {
         port(config.getPort());
         threadPool(8, 2, 30000);
-        staticFiles.location("/public");
+        
+        // 정적 파일의 기본 경로를 /checkutil 아래로 설정
+        staticFiles.externalLocation("/public");
+        staticFiles.header("X-Content-Type-Options", "nosniff");
+        
+        // 모든 요청에 대해 /checkutil 프리픽스 추가
+        before((request, response) -> {
+            if (!request.pathInfo().startsWith("/checkutil")) {
+                response.redirect("/checkutil" + request.pathInfo());
+            }
+        });
         
         // Set response timeout using proper Spark/Servlet methods
         before((request, response) -> {
@@ -68,21 +78,15 @@ public class NetworkDiagnosticServer {
     }
 
     private void setupRoutes() {
-        before((req, res) -> {
-            System.out.printf("Request: %s %s | Headers: %s | QueryParams: %s%n",
-                req.requestMethod(),
-                req.pathInfo(),
-                req.headers(),
-                req.queryParams()
-            );
+        // 모든 라우트에 /checkutil 프리픽스 추가
+        path("/checkutil", () -> {
+            get("/health", requestHandler::handleHealthCheck);
+            get("/", requestHandler::handleHome);
+            post("/netcat", requestHandler::handleNetcat);
+            post("/nslookup", requestHandler::handleNslookup);
+            post("/curl", requestHandler::handleCurl);
+            post("/message", requestHandler::handleMessage);
         });
-
-        get("/health", requestHandler::handleHealthCheck);
-        get("/", requestHandler::handleHome);
-        post("/netcat", requestHandler::handleNetcat);
-        post("/nslookup", requestHandler::handleNslookup);
-        post("/curl", requestHandler::handleCurl);
-        post("/message", requestHandler::handleMessage);
     }
 
     private void setupErrorHandling() {

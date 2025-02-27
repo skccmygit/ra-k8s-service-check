@@ -2,15 +2,15 @@
 <html>
 <head>
     <title>Network Diagnostic Tools</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/checkutil/css/styles.css">
     <script src="/checkutil/js/main.js"></script>
 </head>
 <body>
     <h1>Network Diagnostic Tools</h1>
     <div class="tool-container">
         <h3>Netcat Test</h3>
-        <input type="text" id="nc-ip" placeholder="IP address">
-        <input type="text" id="nc-port" placeholder="Port">
+        <input type="text" id="nc-ip" placeholder="IP address" style="width: 350px;">
+        <input type="text" id="nc-port" placeholder="Port" style="width: 150px;">
         <button onclick="runNetcat()" id="netcat-btn">Test Connection</button>
         <div class="loading" id="netcat-loading" style="display:none">Testing connection...</div>
         <pre id="netcat-result" class="result"></pre>
