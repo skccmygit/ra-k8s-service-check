@@ -105,7 +105,7 @@ jobs:
           helm upgrade --install ${{ env._SERVICE_NAME }} helm \
             -f helm/values${{ env._ENV }}.yaml \
             --namespace ${{ env._NAME_SPACE }} \
-            --set image.repository=${{ env.REGISTRY }}.azurecr.io/${{ env.IMAGE_NAME }} \
+            --set image.repository=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} \
             --set image.tag=${{ env.IMAGE_TAG }}
   
       # steps:
