@@ -15,7 +15,11 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
-# Copy the jar file
+# Verify JAR contents (optional)
+COPY ./target/k8sExample-jar-with-dependencies.jar /tmp/app.jar
+RUN jar tvf /tmp/app.jar | grep -E "html|css|js" || exit 1
+
+# Copy the verified JAR
 COPY ./target/k8sExample-jar-with-dependencies.jar app.jar
 
 # Set ownership to non-root user

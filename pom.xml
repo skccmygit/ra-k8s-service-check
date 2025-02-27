@@ -42,12 +42,23 @@
     </dependency>
   </dependencies>
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId><artifactId>maven-jar-plugin</artifactId><version>2.4</version>
         <configuration><finalName>k8sExample</finalName><archive><manifest>
               <addClasspath>true</addClasspath><mainClass>k8sExample.Application</mainClass><classpathPrefix>dependency-jars/</classpathPrefix>
             </manifest></archive>
+          <includes>
+            <include>**/*.html</include>
+            <include>**/*.css</include>
+            <include>**/*.js</include>
+          </includes>
         </configuration>
       </plugin>
       <plugin>
