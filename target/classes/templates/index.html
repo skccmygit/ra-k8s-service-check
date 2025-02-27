@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Network Diagnostic Tools</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="/js/main.js"></script>
+</head>
+<body>
+    <h1>Network Diagnostic Tools</h1>
+    <div class="tool-container">
+        <h3>Netcat Test</h3>
+        <input type="text" id="nc-ip" placeholder="IP address">
+        <input type="text" id="nc-port" placeholder="Port">
+        <button onclick="runNetcat()">Test Connection</button>
+        <pre id="netcat-result" class="result"></pre>
+    </div>
+    
+    <div class="tool-container">
+        <h3>DNS Lookup Test</h3>
+        <input type="text" id="nslookup-url" placeholder="Domain name">
+        <button onclick="runNslookup()">Lookup</button>
+        <pre id="nslookup-result" class="result"></pre>
+    </div>
+    
+    <div class="tool-container">
+        <h3>Curl Test</h3>
+        <input type="text" id="curl-url" placeholder="URL">
+        <button onclick="runCurl()">Send Request</button>
+        <pre id="curl-result" class="result"></pre>
+    </div>
+    
+    <hr>
+    <h2>Server Information</h2>
+    <div id="server-info">%s</div>
+</body>
+</html> 
