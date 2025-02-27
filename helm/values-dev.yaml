@@ -28,11 +28,11 @@ readiness:
           
 resources:
   requests:
-    cpu: 300m
-    memory: 256Mi
+    cpu: 200m
+    memory: 128Mi
   limits:
-    cpu: 300m
-    memory: 256Mi
+    cpu: 200m
+    memory: 128Mi
 
 ingress:
   port: 80
