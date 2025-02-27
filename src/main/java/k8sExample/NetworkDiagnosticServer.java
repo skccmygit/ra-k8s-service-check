@@ -27,22 +27,20 @@ public class NetworkDiagnosticServer {
         port(config.getPort());
         threadPool(8, 2, 30000);
         
-        // 정적 파일 설정 수정
+        // 정적 파일 설정
         staticFiles.location("/public");
         staticFiles.expireTime(600);
         
-        // before 필터 수정 - 정적 파일 요청 처리 개선
+        // before 필터 수정
         before((request, response) -> {
             String path = request.pathInfo();
             System.out.println("Incoming request path: " + path);
             
-            // 정적 파일 요청은 리다이렉트하지 않음
+            // 정적 파일이나 checkutil 경로는 리다이렉트하지 않음
             if (!path.startsWith("/checkutil") && 
                 !path.contains(".js") && 
                 !path.contains(".css")) {
-                String newPath = "/checkutil" + path;
-                System.out.println("Redirecting to: " + newPath);
-                response.redirect(newPath);
+                response.redirect("/checkutil" + path);
             }
         });
         
@@ -88,15 +86,18 @@ public class NetworkDiagnosticServer {
     }
 
     private void setupRoutes() {
+        // checkutil 경로 아래의 모든 라우트 설정
         path("/checkutil", () -> {
-            get("/", (req, res) -> {
-                System.out.println("Handling root path: " + req.pathInfo()); // 디버깅용 로그
-                return requestHandler.handleHome(req, res);
-            });
             get("", (req, res) -> {
-                System.out.println("Handling empty path: " + req.pathInfo()); // 디버깅용 로그
+                System.out.println("Handling checkutil root path");
                 return requestHandler.handleHome(req, res);
             });
+            
+            get("/", (req, res) -> {
+                System.out.println("Handling checkutil root path with slash");
+                return requestHandler.handleHome(req, res);
+            });
+            
             get("/health", requestHandler::handleHealthCheck);
             post("/netcat", requestHandler::handleNetcat);
             post("/nslookup", requestHandler::handleNslookup);
