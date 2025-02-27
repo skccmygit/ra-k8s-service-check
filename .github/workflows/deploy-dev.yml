@@ -15,7 +15,7 @@ env:
   _DOCKER_FILE_NAME: "Dockerfile"
   REGISTRY: newkmacr.azurecr.io
   IMAGE_NAME: "k8s-service-check"
-  IMAGE_TAG: "1.0.0-SNAPSHOT"
+  DEFAULT_IMAGE_TAG: 1.0.0-SNAPSHOT
 
 
 jobs:
@@ -37,7 +37,7 @@ jobs:
     
     - name: Set Image Tag
       run: |
-        echo "IMAGE_TAG=${IMAGE_TAG}.$(date +'%Y%m%d').${{ github.run_number }}" >> $GITHUB_ENV
+        echo "IMAGE_TAG=${DEFAULT_IMAGE_TAG}.$(date +'%Y%m%d').${{ github.run_number }}" >> $GITHUB_ENV
 
     - name: Build with Maven
       env:
@@ -73,7 +73,7 @@ jobs:
           ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
         cache-from: |
           type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
+          type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.DEFAULT_IMAGE_TAG }}
         cache-to: type=inline        
 
     - name: Upload manifests
@@ -102,6 +102,7 @@ jobs:
 
       - name: Deploy to AKS
         run: |
+          echo image tag: ${{ env.IMAGE_TAG }}
           helm upgrade --install ${{ env._SERVICE_NAME }} helm \
             -f helm/values${{ env._ENV }}.yaml \
             --namespace ${{ env._NAME_SPACE }} \
