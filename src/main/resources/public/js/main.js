@@ -51,4 +51,9 @@ async function executeCommand(command, params) {
         document.getElementById(btnId).disabled = false;
         document.getElementById(loadingId).style.display = 'none';
     }
-} 
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // 여기에 자바스크립트 코드가 들어갑니다
+    console.log('네트워크 진단 도구가 로드되었습니다');
+}); 

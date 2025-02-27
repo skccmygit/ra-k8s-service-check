@@ -29,7 +29,6 @@ public class NetworkDiagnosticServer {
         
         // 정적 파일 설정 수정
         staticFiles.location("/public");
-        staticFiles.externalLocation("/app/public");  // 추가: 외부 정적 파일도 지원
         staticFiles.header("Access-Control-Allow-Origin", "*");
         staticFiles.expireTime(600);
         
@@ -95,20 +94,19 @@ public class NetworkDiagnosticServer {
         
         get("/checkutil/", (req, res) -> {
             System.out.println("Handling /checkutil/ path");
+            res.type("text/html");  // 명시적으로 컨텐츠 타입 설정
             return requestHandler.handleHome(req, res);
         });
         
-        // 정적 리소스 경로 수정
+        // 정적 리소스 경로 수정 - 직접적인 정적 파일 처리는 Spark의 staticFiles 설정에 의해 처리됨
         get("/checkutil/css/*", (req, res) -> {
-            String file = req.splat()[0];
             res.type("text/css");
-            return staticFiles.consumeResource("css/" + file);
+            return null;  // staticFiles 설정이 자동으로 처리
         });
         
         get("/checkutil/js/*", (req, res) -> {
-            String file = req.splat()[0];
             res.type("application/javascript");
-            return staticFiles.consumeResource("js/" + file);
+            return null;  // staticFiles 설정이 자동으로 처리
         });
         
         get("/checkutil/health", requestHandler::handleHealthCheck);
