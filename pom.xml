@@ -4,20 +4,22 @@
   <modelVersion>4.0.0</modelVersion>
 
 
-  <groupId>helloWorld</groupId>
-  <artifactId>helloWorld</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <groupId>com.github.skccmygit</groupId>
+  <artifactId>ra-k8s-service-check</artifactId>
+  <version>1.0.0-RELEASE</version>
 
-  <distributionManagement>
+<distributionManagement>
     <repository>
-      <id>releases</id>
-      <url>https://github.com/orgs/skccmygit/packages/maven-repo</url>
+        <id>github</id>
+        <name>GitHub Packages</name>
+        <url>https://maven.pkg.github.com/skccmygit/${project.artifactId}</url>
     </repository>
     <snapshotRepository>
-      <id>snapshots</id>
-      <url>https://github.com/orgs/skccmygit/packages/maven-repo</url>
+        <id>github</id>
+        <name>GitHub Packages</name>
+        <url>https://maven.pkg.github.com/skccmygit/${project.artifactId}</url>
     </snapshotRepository>
-  </distributionManagement>
+</distributionManagement>
 
   <dependencies>
     <dependency>
