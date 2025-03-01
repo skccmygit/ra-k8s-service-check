@@ -38,5 +38,5 @@ ENV JAVA_OPTS="-XX:+UseContainerSupport \
 HEALTHCHECK --interval=30s --timeout=3s \
   CMD curl -f http://localhost:4567/checkutil/health || exit 1
 
-# Start app
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+# Start app with debug logging
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -Dlogging.level.root=DEBUG -jar app.jar"]
