@@ -114,18 +114,7 @@
         </plugins>
     </build>
 
-    <distributionManagement>
-        <repository>
-            <id>sapbss-dev-bss-codeartifact</id>
-            <name>Azure Artifacts</name>
-            <url>https://pkgs.dev.azure.com/your-org/_packaging/your-feed/maven/v1</url>
-        </repository>
-        <snapshotRepository>
-            <id>sapbss-dev-bss-codeartifact</id>
-            <name>Azure Artifacts</name>
-            <url>https://pkgs.dev.azure.com/your-org/_packaging/your-feed/maven/v1</url>
-        </snapshotRepository>
-    </distributionManagement>
+
 
     <name>Kubernetes Service Check Tool</name>
     <description>네트워크 진단 도구 for Kubernetes</description>
