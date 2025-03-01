@@ -25,12 +25,15 @@ public class NetworkDiagnosticServer {
         this.requestHandler = requestHandler;
     }
 
-    @GetMapping({"", "/"})
+    @GetMapping({"", "/", "/index"})
     public ModelAndView index() {
+        logger.info("Index endpoint called");  // 로그 추가
         ModelAndView modelAndView = new ModelAndView("index");
         try {
             modelAndView.addObject("serverInfo", requestHandler.generateServerInfo());
+            logger.info("Server info generated successfully");
         } catch (Exception e) {
+            logger.error("Error generating server info", e);
             modelAndView.addObject("error", "서버 정보를 가져오는데 실패했습니다.");
         }
         return modelAndView;
