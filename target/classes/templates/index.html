@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Network Diagnostic Tools</title>
-    <link rel="stylesheet" href="/checkutil/css/styles.css">
-    <script src="/checkutil/js/main.js" type="text/javascript"></script>
+    <meta charset="UTF-8">
+    <title>네트워크 진단 도구</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/main.js}" type="text/javascript"></script>
     <script>
         // 함수들이 전역 스코프에 있는지 확인
         window.onload = function() {
@@ -16,34 +17,39 @@
     </script>
 </head>
 <body>
-    <h1>Network Diagnostic Tools</h1>
-    <div class="tool-container">
-        <h3>Netcat Test</h3>
-        <input type="text" id="nc-ip" placeholder="IP address" style="width: 350px;">
-        <input type="text" id="nc-port" placeholder="Port" style="width: 150px;">
-        <button onclick="runNetcat()" id="netcat-btn">Test Connection</button>
-        <div class="loading" id="netcat-loading" style="display:none">Testing connection...</div>
-        <pre id="netcat-result" class="result"></pre>
+    <div class="container">
+        <h1>네트워크 진단 도구</h1>
+        <div id="tools">
+            <div class="tool-container">
+                <h3>Netcat Test</h3>
+                <input type="text" id="nc-ip" placeholder="IP address" style="width: 350px;">
+                <input type="text" id="nc-port" placeholder="Port" style="width: 150px;">
+                <button onclick="runNetcat()" id="netcat-btn">Test Connection</button>
+                <div class="loading" id="netcat-loading" style="display:none">Testing connection...</div>
+                <pre id="netcat-result" class="result"></pre>
+            </div>
+            
+            <div class="tool-container">
+                <h3>DNS Lookup Test</h3>
+                <input type="text" id="nslookup-url" placeholder="Domain name" style="width: 500px;">
+                <button onclick="runNslookup()" id="nslookup-btn">Lookup</button>
+                <div class="loading" id="nslookup-loading" style="display:none">Looking up DNS...</div>
+                <pre id="nslookup-result" class="result"></pre>
+            </div>
+            
+            <div class="tool-container">
+                <h3>Curl Test</h3>
+                <input type="text" id="curl-url" placeholder="URL" style="width: 500px;">
+                <button onclick="runCurl()" id="curl-btn">Send Request</button>
+                <div class="loading" id="curl-loading" style="display:none">Sending request...</div>
+                <pre id="curl-result" class="result"></pre>
+            </div>
+        </div>
+        <div id="results">
+            <hr>
+            <h2>Server Information</h2>
+            <div id="server-info" th:utext="${serverInfo}"></div>
+        </div>
     </div>
-    
-    <div class="tool-container">
-        <h3>DNS Lookup Test</h3>
-        <input type="text" id="nslookup-url" placeholder="Domain name" style="width: 500px;">
-        <button onclick="runNslookup()" id="nslookup-btn">Lookup</button>
-        <div class="loading" id="nslookup-loading" style="display:none">Looking up DNS...</div>
-        <pre id="nslookup-result" class="result"></pre>
-    </div>
-    
-    <div class="tool-container">
-        <h3>Curl Test</h3>
-        <input type="text" id="curl-url" placeholder="URL" style="width: 500px;">
-        <button onclick="runCurl()" id="curl-btn">Send Request</button>
-        <div class="loading" id="curl-loading" style="display:none">Sending request...</div>
-        <pre id="curl-result" class="result"></pre>
-    </div>
-    
-    <hr>
-    <h2>Server Information</h2>
-    <div id="server-info">%s</div>
 </body>
 </html> 

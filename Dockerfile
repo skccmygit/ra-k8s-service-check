@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copy pre-built JAR
-COPY target/ra-k8s-service-check-jar-with-dependencies.jar app.jar
+COPY target/ra-k8s-service-check-1.0.0-SNAPSHOT.jar app.jar
 RUN jar tvf app.jar | grep -E "templates/|public/" || echo "Warning: Resources might be missing"
 
 # Set ownership and switch user
@@ -39,7 +39,4 @@ HEALTHCHECK --interval=30s --timeout=3s \
   CMD curl -f http://localhost:4567/checkutil/health || exit 1
 
 # Start app
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS \
-    -Duser.language=ko \
-    -Duser.country=KR \
-    -jar app.jar"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

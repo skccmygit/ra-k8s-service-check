@@ -9,7 +9,9 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.nio.charset.StandardCharsets;
 import java.io.File;
+import org.springframework.stereotype.Service;
 
+@Service
 public class NetworkCommandExecutor {
     private static final Logger logger = LoggerFactory.getLogger(NetworkCommandExecutor.class);
 
