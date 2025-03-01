@@ -54,12 +54,16 @@ public class NetworkDiagnosticServer {
     @PostMapping("/netcat")
     @ResponseBody
     public ResponseEntity<String> netcat(@RequestBody NetcatRequest request) {
+        logger.debug("Netcat request received for IP: {} and Port: {}", request.getIp(), request.getPort());
         try {
             String command = String.format("nc -zv %s %s", request.getIp(), request.getPort());
+            String result = commandExecutor.execute(command);
+            logger.debug("Netcat command executed successfully: {}", result);
             return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(commandExecutor.execute(command));
+                .body(result);
         } catch (Exception e) {
+            logger.error("Error executing netcat command", e);
             return ResponseEntity.badRequest()
                 .body("{\"error\":\"Invalid request parameters\"}");
         }
