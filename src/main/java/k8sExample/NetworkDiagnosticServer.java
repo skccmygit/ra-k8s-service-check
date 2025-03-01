@@ -6,10 +6,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping("/checkutil")
 public class NetworkDiagnosticServer {
+    private static final Logger logger = LoggerFactory.getLogger(NetworkDiagnosticServer.class);
+
     private final ServerConfig config;
     private final NetworkCommandExecutor commandExecutor;
     private final RequestHandler requestHandler;
