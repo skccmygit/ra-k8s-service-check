@@ -44,4 +44,4 @@ ENV JAVA_OPTS="-XX:+UseContainerSupport \
 
 
 # Start app with debug logging
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar --debug"]
