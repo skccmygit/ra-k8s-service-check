@@ -1,0 +1,90 @@
+name: Deploy to Production Environment
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  _PROJECT_NAME: "k8s-service-check"
+  _SERVICE_NAME: "k8s-service-check"
+
+  _DOCKER_FILE_NAME: "Dockerfile"
+  REGISTRY: ghcr.io
+  IMAGE_NAME: "k8s-service-check"
+  DEFAULT_IMAGE_TAG: 1.0.0-SNAPSHOT
+
+
+jobs:
+  build-and-push:
+    runs-on: newkm-landscape-runner    # GitHub-hosted runner 사용
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+    
+    - name: Set Image Tag
+      run: |
+        echo "IMAGE_TAG=${DEFAULT_IMAGE_TAG}.$(date +'%Y%m%d')" >> $GITHUB_ENV
+
+    - name: Build with Maven
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        # GitHub Packages에 인증 설정
+        mkdir -p ~/.m2
+        echo "<settings><servers><server><id>github</id><username>${GITHUB_ACTOR}</username><password>${GITHUB_TOKEN}</password></server></servers></settings>" > ~/.m2/settings.xml
+        
+        # 빌드 및 배포
+        mvn clean package
+        mvn deploy
+
+    - name: Log in to the Container registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Pull latest image for caching
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest || true
+        DOCKER_BUILDKIT=1
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: |
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+        cache-from: |
+          type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+        cache-to: type=inline        
+
+    - name: Upload manifests
+      uses: actions/upload-artifact@v4
+      with:
+        name: manifests-helm
+        path: helm/
+
+
+
+
