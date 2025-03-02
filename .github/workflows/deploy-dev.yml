@@ -4,7 +4,10 @@ on:
   push:
     branches: [ develop ]
     paths:
-      - 'k8s-service-check/**'
+      - 'helm/**'
+      - 'src/**'
+      - 'pom.xml'
+      - 'Dockerfile'
       - '.github/workflows/deploy-dev.yml'    
   workflow_dispatch:
 
