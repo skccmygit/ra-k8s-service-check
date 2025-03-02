@@ -104,7 +104,7 @@ public class NetworkDiagnosticServer {
                 .body("{\"error\":\"Invalid request parameters\"}");
         }
     }
-}
+
 
 // Request DTO classes
 class NetcatRequest {
