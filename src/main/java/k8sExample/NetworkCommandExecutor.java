@@ -96,8 +96,25 @@ public class NetworkCommandExecutor {
     }
 
     private String formatOutput(String output) {
-        return String.format("{\"output\": \"%s\"}", 
-            output.replace("\"", "\\\"").replace("\n", "\\n"));
+        // 출력 길이를 500자로 제한
+        if (output.length() > 1500) {
+            output = output.substring(0, 1497) + "...";
+        }
+        
+        // 모든 제어 문자와 특수 문자를 적절히 처리
+        String sanitized = output
+            .replace("\\", "\\\\")  // 백슬래시 먼저 이스케이프
+            .replace("\"", "\\\"")  // 큰따옴표 이스케이프
+            .replace("\n", "\\n")   // 줄바꿈 이스케이프
+            .replace("\r", "\\r")   // 캐리지 리턴 이스케이프
+            .replace("\t", "\\t")   // 탭 이스케이프
+            .replace("\b", "\\b")   // 백스페이스 이스케이프
+            .replace("\f", "\\f");  // 폼피드 이스케이프
+        
+        // 기타 제어 문자 제거 (ASCII 0-31 범위의 문자)
+        sanitized = sanitized.replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "");
+        
+        return String.format("{\"output\": \"%s\"}", sanitized);
     }
 
     private ProcessBuilder createProcessBuilder(String command) {

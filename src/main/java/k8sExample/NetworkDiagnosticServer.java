@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Controller
-@RequestMapping("/checkutil")
 public class NetworkDiagnosticServer {
     private static final Logger logger = LoggerFactory.getLogger(NetworkDiagnosticServer.class);
 
@@ -29,7 +28,16 @@ public class NetworkDiagnosticServer {
         this.requestHandler = requestHandler;
     }
 
-    @GetMapping({"", "/", "/index"})
+    @GetMapping("/health")
+    @ResponseBody
+    public ResponseEntity<String> healthCheck() {
+        logger.info("헬스 체크 엔드포인트 호출됨");
+        return ResponseEntity.ok()
+            .contentType(MediaType.APPLICATION_JSON)
+            .body("{\"status\":\"OK\"}");
+    }
+
+    @GetMapping({"/", "/index"})
     public ModelAndView index() {
         logger.info("Index 엔드포인트 호출됨");
         ModelAndView modelAndView = new ModelAndView("index");
@@ -42,14 +50,6 @@ public class NetworkDiagnosticServer {
             modelAndView.addObject("serverInfo", "서버 정보를 가져오는데 실패했습니다: " + e.getMessage());
         }
         return modelAndView;
-    }
-
-    @GetMapping("/health")
-    @ResponseBody
-    public ResponseEntity<String> healthCheck() {
-        return ResponseEntity.ok()
-            .contentType(MediaType.APPLICATION_JSON)
-            .body("{\"status\":\"OK\"}");
     }
 
     @PostMapping("/netcat")
@@ -88,7 +88,14 @@ public class NetworkDiagnosticServer {
     @ResponseBody
     public ResponseEntity<String> curl(@RequestBody UrlRequest request) {
         try {
-            String command = String.format("curl -v %s", request.getUrl());
+            String url = request.getUrl();
+            
+            // URL에 http:// 또는 https:// 접두사가 없으면 http:// 추가
+            if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                url = "http://" + url;
+            }
+            
+            String command = String.format("curl -v %s", url);
             return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(commandExecutor.execute(command));

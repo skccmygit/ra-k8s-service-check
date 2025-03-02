@@ -13,6 +13,31 @@
             console.log('runNetcat exists:', typeof runNetcat === 'function');
             console.log('runNslookup exists:', typeof runNslookup === 'function');
             console.log('runCurl exists:', typeof runCurl === 'function');
+            
+            // 엔터키 이벤트 리스너 추가
+            document.getElementById('nc-ip').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('nc-port').focus();
+                }
+            });
+            
+            document.getElementById('nc-port').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    runNetcat();
+                }
+            });
+            
+            document.getElementById('nslookup-url').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    runNslookup();
+                }
+            });
+            
+            document.getElementById('curl-url').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    runCurl();
+                }
+            });
         }
     </script>
 </head>
@@ -33,8 +58,8 @@
             <!-- Netcat 도구 -->
             <div class="tool-container">
                 <h3>포트 연결 테스트 (Netcat)</h3>
-                <input type="text" id="nc-ip" placeholder="IP 주소 또는 도메인">
-                <input type="text" id="nc-port" placeholder="포트 번호">
+                <input type="text" id="nc-ip" placeholder="IP 주소 또는 도메인" style="width: 38%;">
+                <input type="text" id="nc-port" placeholder="포트 번호" style="width: 12%;">
                 <button id="netcat-btn" onclick="runNetcat()">테스트</button>
                 <div id="netcat-loading" style="display:none;">처리 중...</div>
                 <pre id="netcat-result" class="result"></pre>
@@ -43,7 +68,7 @@
             <!-- DNS 조회 도구 -->
             <div class="tool-container">
                 <h3>DNS 조회 (nslookup)</h3>
-                <input type="text" id="nslookup-url" placeholder="도메인 이름">
+                <input type="text" id="nslookup-url" placeholder="도메인 이름" style="width: 50%;">
                 <button id="nslookup-btn" onclick="runNslookup()">조회</button>
                 <div id="nslookup-loading" style="display:none;">처리 중...</div>
                 <pre id="nslookup-result" class="result"></pre>
@@ -52,7 +77,7 @@
             <!-- Curl 도구 -->
             <div class="tool-container">
                 <h3>HTTP 요청 테스트 (curl)</h3>
-                <input type="text" id="curl-url" placeholder="URL (http:// 또는 https://)">
+                <input type="text" id="curl-url" placeholder="URL (또는 서비스명.namespace.svc.cluster.local)" style="width: 50%;">
                 <button id="curl-btn" onclick="runCurl()">요청</button>
                 <div id="curl-loading" style="display:none;">처리 중...</div>
                 <pre id="curl-result" class="result"></pre>
