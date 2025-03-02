@@ -14,7 +14,7 @@ env:
 
   _DOCKER_FILE_NAME: "Dockerfile"
   REGISTRY: ghcr.io
-  IMAGE_NAME: "k8s-service-check"
+  IMAGE_NAME: "skccmygit/ra-k8s-service-check"
   DEFAULT_IMAGE_TAG: 1.0.0-SNAPSHOT
 
 
@@ -45,7 +45,11 @@ jobs:
       run: |
         # GitHub Packages에 인증 설정
         mkdir -p ~/.m2
-        echo "<settings><servers><server><id>github</id><username>${GITHUB_ACTOR}</username><password>${GITHUB_TOKEN}</password></server></servers></settings>" > ~/.m2/settings.xml
+        echo "<settings><servers>
+                <server><id>github</id>
+                     <username>${GITHUB_ACTOR}</username>
+                     <password>${GITHUB_TOKEN}</password>
+                </server></servers></settings>" > ~/.m2/settings.xml
         
         # 빌드 및 배포
         mvn clean package
