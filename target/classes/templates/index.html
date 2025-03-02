@@ -19,36 +19,44 @@
 <body>
     <div class="container">
         <h1>네트워크 진단 도구</h1>
-        <div id="tools">
+        
+        <!-- 서버 정보 섹션 -->
+        <div class="server-info">
+            <h2>서버 정보</h2>
+            <div th:utext="${serverInfo}" id="server-info">서버 정보를 불러오는 중...</div>
+        </div>
+
+        <!-- 네트워크 진단 도구 섹션 -->
+        <div class="tool-section">
+            <h2>네트워크 진단 도구</h2>
+            
+            <!-- Netcat 도구 -->
             <div class="tool-container">
-                <h3>Netcat Test</h3>
-                <input type="text" id="nc-ip" placeholder="IP address" style="width: 350px;">
-                <input type="text" id="nc-port" placeholder="Port" style="width: 150px;">
-                <button onclick="runNetcat()" id="netcat-btn">Test Connection</button>
-                <div class="loading" id="netcat-loading" style="display:none">Testing connection...</div>
+                <h3>포트 연결 테스트 (Netcat)</h3>
+                <input type="text" id="nc-ip" placeholder="IP 주소 또는 도메인">
+                <input type="text" id="nc-port" placeholder="포트 번호">
+                <button id="netcat-btn" onclick="runNetcat()">테스트</button>
+                <div id="netcat-loading" style="display:none;">처리 중...</div>
                 <pre id="netcat-result" class="result"></pre>
             </div>
             
+            <!-- DNS 조회 도구 -->
             <div class="tool-container">
-                <h3>DNS Lookup Test</h3>
-                <input type="text" id="nslookup-url" placeholder="Domain name" style="width: 500px;">
-                <button onclick="runNslookup()" id="nslookup-btn">Lookup</button>
-                <div class="loading" id="nslookup-loading" style="display:none">Looking up DNS...</div>
+                <h3>DNS 조회 (nslookup)</h3>
+                <input type="text" id="nslookup-url" placeholder="도메인 이름">
+                <button id="nslookup-btn" onclick="runNslookup()">조회</button>
+                <div id="nslookup-loading" style="display:none;">처리 중...</div>
                 <pre id="nslookup-result" class="result"></pre>
             </div>
             
+            <!-- Curl 도구 -->
             <div class="tool-container">
-                <h3>Curl Test</h3>
-                <input type="text" id="curl-url" placeholder="URL" style="width: 500px;">
-                <button onclick="runCurl()" id="curl-btn">Send Request</button>
-                <div class="loading" id="curl-loading" style="display:none">Sending request...</div>
+                <h3>HTTP 요청 테스트 (curl)</h3>
+                <input type="text" id="curl-url" placeholder="URL (http:// 또는 https://)">
+                <button id="curl-btn" onclick="runCurl()">요청</button>
+                <div id="curl-loading" style="display:none;">처리 중...</div>
                 <pre id="curl-result" class="result"></pre>
             </div>
-        </div>
-        <div id="results">
-            <hr>
-            <h2>Server Information</h2>
-            <div id="server-info" th:utext="${serverInfo}"></div>
         </div>
     </div>
 </body>
