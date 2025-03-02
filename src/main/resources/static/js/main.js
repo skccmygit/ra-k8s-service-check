@@ -1,5 +1,49 @@
 // 네트워크 진단 도구 JavaScript 함수
 
+// 공통 실행 함수
+async function executeCommand(command, params) {
+    const btnId = `${command}-btn`;
+    const loadingId = `${command}-loading`;
+    const resultId = `${command}-result`;
+    
+    try {
+        // UI 상태 업데이트
+        document.getElementById(btnId).disabled = true;
+        document.getElementById(loadingId).style.display = 'block';
+        document.getElementById(resultId).textContent = '';
+        
+        // 타임아웃 설정
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+        const response = await fetch(`/checkutil/${command}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(params),
+            signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP 오류! 상태: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        document.getElementById(resultId).textContent = data.output.replace(/\\n/g, '\n');
+    } catch (error) {
+        if (error.name === 'AbortError') {
+            document.getElementById(resultId).textContent = '요청이 10초 후 시간 초과되었습니다';
+        } else {
+            document.getElementById(resultId).textContent = '오류: ' + error.message;
+        }
+    } finally {
+        // UI 상태 복원
+        document.getElementById(btnId).disabled = false;
+        document.getElementById(loadingId).style.display = 'none';
+    }
+}
+
 // Netcat 테스트 실행
 function runNetcat() {
     const ip = document.getElementById('nc-ip').value;
@@ -10,30 +54,7 @@ function runNetcat() {
         return;
     }
     
-    // 로딩 표시 보이기
-    document.getElementById('netcat-loading').style.display = 'block';
-    document.getElementById('netcat-btn').disabled = true;
-    document.getElementById('netcat-result').textContent = '';
-    
-    fetch('/checkutil/netcat', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ip: ip, port: port })
-    })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById('netcat-result').textContent = data.output.replace(/\\n/g, '\n');
-    })
-    .catch(error => {
-        document.getElementById('netcat-result').textContent = '오류: ' + error.message;
-    })
-    .finally(() => {
-        // 로딩 표시 숨기기
-        document.getElementById('netcat-loading').style.display = 'none';
-        document.getElementById('netcat-btn').disabled = false;
-    });
+    executeCommand('netcat', { ip, port });
 }
 
 // DNS 조회 테스트 실행
@@ -45,30 +66,7 @@ function runNslookup() {
         return;
     }
     
-    // 로딩 표시 보이기
-    document.getElementById('nslookup-loading').style.display = 'block';
-    document.getElementById('nslookup-btn').disabled = true;
-    document.getElementById('nslookup-result').textContent = '';
-    
-    fetch('/checkutil/nslookup', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url: url })
-    })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById('nslookup-result').textContent = data.output.replace(/\\n/g, '\n');
-    })
-    .catch(error => {
-        document.getElementById('nslookup-result').textContent = '오류: ' + error.message;
-    })
-    .finally(() => {
-        // 로딩 표시 숨기기
-        document.getElementById('nslookup-loading').style.display = 'none';
-        document.getElementById('nslookup-btn').disabled = false;
-    });
+    executeCommand('nslookup', { url });
 }
 
 // Curl 테스트 실행
@@ -80,30 +78,7 @@ function runCurl() {
         return;
     }
     
-    // 로딩 표시 보이기
-    document.getElementById('curl-loading').style.display = 'block';
-    document.getElementById('curl-btn').disabled = true;
-    document.getElementById('curl-result').textContent = '';
-    
-    fetch('/checkutil/curl', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url: url })
-    })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById('curl-result').textContent = data.output.replace(/\\n/g, '\n');
-    })
-    .catch(error => {
-        document.getElementById('curl-result').textContent = '오류: ' + error.message;
-    })
-    .finally(() => {
-        // 로딩 표시 숨기기
-        document.getElementById('curl-loading').style.display = 'none';
-        document.getElementById('curl-btn').disabled = false;
-    });
+    executeCommand('curl', { url });
 }
 
 // 페이지 로드 시 실행
