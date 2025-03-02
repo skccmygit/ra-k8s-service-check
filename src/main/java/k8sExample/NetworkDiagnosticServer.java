@@ -31,14 +31,15 @@ public class NetworkDiagnosticServer {
 
     @GetMapping({"", "/", "/index"})
     public ModelAndView index() {
-        logger.info("Index endpoint called");  // 로그 추가
+        logger.info("Index 엔드포인트 호출됨");
         ModelAndView modelAndView = new ModelAndView("index");
         try {
-            modelAndView.addObject("serverInfo", requestHandler.generateServerInfo());
-            logger.info("Server info generated successfully");
+            String serverInfo = requestHandler.generateServerInfo();
+            logger.info("서버 정보 생성 성공: {}", serverInfo);
+            modelAndView.addObject("serverInfo", serverInfo);
         } catch (Exception e) {
-            logger.error("Error generating server info", e);
-            modelAndView.addObject("error", "서버 정보를 가져오는데 실패했습니다.");
+            logger.error("서버 정보 생성 중 오류 발생", e);
+            modelAndView.addObject("serverInfo", "서버 정보를 가져오는데 실패했습니다: " + e.getMessage());
         }
         return modelAndView;
     }
