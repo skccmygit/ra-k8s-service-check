@@ -9,7 +9,7 @@ on:
       - 'src/**'
       - 'pom.xml'
       - 'Dockerfile'
-      - '.github/workflows/deploy-dev.yml'    
+      - '.github/workflows/deploy-prd.yml'    
   workflow_dispatch:
 
 env:
