@@ -89,11 +89,16 @@ jobs:
           type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
         cache-to: type=inline        
 
-    - name: Upload manifests
-      uses: actions/upload-artifact@v4
-      with:
-        name: manifests-helm
-        path: helm/
+    - name: Upload to GitHub Release
+      run: |
+        # 기존 릴리스 삭제
+        gh release delete ra-k8s-service-check-v1.0.0 || true
+        # 릴리즈가 없으면 생성
+        gh release create ra-k8s-service-check-v1.0.0 --title "Network Diagnostic Release" 
+        # 파일 업로드 (또는 덮어쓰기)
+        gh release upload ra-k8s-service-check-v1.0.0 ./target/ra-k8s-service-check-1.0.0-SNAPSHOT.jar --clobber
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
 
 
 
