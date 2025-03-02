@@ -3,6 +3,9 @@ name: Deploy to Production Environment
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'k8s-service-check/**'
+      - '.github/workflows/deploy-prd.yml'    
   workflow_dispatch:
 
 env:
