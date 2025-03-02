@@ -1,0 +1,26 @@
+# Maven 빌드 결과물
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# 로그 파일
+*.log
+
+# IDE 설정 파일
+.idea/
+*.iml
+*.iws
+*.ipr
+.classpath
+.project
+.settings/
+.vscode/
+
+# OS 생성 파일
+.DS_Store
+Thumbs.db 
