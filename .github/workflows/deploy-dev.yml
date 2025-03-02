@@ -2,7 +2,10 @@ name: Deploy to Development Environment
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ develop ]
+    paths:
+      - 'k8s-service-check/**'
+      - '.github/workflows/deploy-dev.yml'    
   workflow_dispatch:
 
 env:
