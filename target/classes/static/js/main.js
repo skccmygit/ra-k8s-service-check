@@ -7,10 +7,10 @@ async function executeCommand(command, params) {
     const resultId = `${command}-result`;
     
     try {
-        // UI 상태 업데이트
         document.getElementById(btnId).disabled = true;
         document.getElementById(loadingId).style.display = 'block';
         document.getElementById(resultId).textContent = '';
+        document.getElementById(resultId).style.color = ''; // 색상 초기화
         
         // 타임아웃 설정
         const controller = new AbortController();
@@ -29,9 +29,16 @@ async function executeCommand(command, params) {
             throw new Error(`HTTP 오류! 상태: ${response.status}`);
         }
         
-        const data = await response.json();
-        document.getElementById(resultId).textContent = data.output.replace(/\\n/g, '\n');
+        const result = await response.json();
+        if (result.error) {
+            document.getElementById(resultId).style.color = 'red'; // 오류는 적색으로
+            document.getElementById(resultId).textContent = result.error;
+        } else {
+            document.getElementById(resultId).style.color = 'green'; // 정상 출력은 녹색으로
+            document.getElementById(resultId).textContent = result.output || '';
+        }
     } catch (error) {
+        document.getElementById(resultId).style.color = 'red'; // 오류는 적색으로
         if (error.name === 'AbortError') {
             document.getElementById(resultId).textContent = '요청이 10초 후 시간 초과되었습니다';
         } else {

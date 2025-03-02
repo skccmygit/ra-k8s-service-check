@@ -24,6 +24,7 @@ async function executeCommand(command, params) {
         document.getElementById(btnId).disabled = true;
         document.getElementById(loadingId).style.display = 'block';
         document.getElementById(resultId).textContent = '';
+        document.getElementById(resultId).style.color = ''; // 색상 초기화
         
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000);
@@ -42,8 +43,15 @@ async function executeCommand(command, params) {
         }
         
         const result = await response.json();
-        document.getElementById(resultId).textContent = result.output || result.error;
+        if (result.error) {
+            document.getElementById(resultId).style.color = 'red'; // 오류는 적색으로
+            document.getElementById(resultId).textContent = result.error;
+        } else {
+            document.getElementById(resultId).style.color = 'green'; // 정상 출력은 녹색으로
+            document.getElementById(resultId).textContent = result.output || '';
+        }
     } catch (error) {
+        document.getElementById(resultId).style.color = 'red'; // 오류는 적색으로
         if (error.name === 'AbortError') {
             document.getElementById(resultId).textContent = 'Request timed out after 10 seconds';
         } else {

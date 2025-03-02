@@ -80,7 +80,7 @@ public class NetworkCommandExecutor {
         Map<String, String> allowedPatterns = Map.of(
             "nc -zv ", "^nc -zv [a-zA-Z0-9.-]+ [0-9]{1,5}$",
             "nslookup ", "^nslookup [a-zA-Z0-9.-]+$",
-            "curl -v ", "^curl -v https?://[a-zA-Z0-9.-]+(/[a-zA-Z0-9.-]*)*$",
+            "curl -v ", "^curl -v (https?://)?[a-zA-Z0-9.-]+(:[0-9]{1,5})?(/[a-zA-Z0-9.-]*)*$",
             "ping ", "^ping -c 4 [a-zA-Z0-9.-]+$",
             "telnet ", "^telnet [a-zA-Z0-9.-]+ [0-9]{1,5}$",
             "dig ", "^dig [a-zA-Z0-9.-]+ (A|AAAA|MX|NS|TXT)?$"

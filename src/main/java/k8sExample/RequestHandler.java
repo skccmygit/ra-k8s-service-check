@@ -73,11 +73,11 @@ public class RequestHandler {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         
         return String.format(
-            "Server IP Address: %s <br>" +
-            "Version: %s <br>" +
-            "App Start Time: %s <br>" +
-            "Cluster Environment: %s <br>" +
-            "Cluster Name: %s",
+            "Server IP Address: <span style=\"color: blue;\">%s</span> <br>" +
+            "Version: <span style=\"color: blue;\">%s</span> <br>" +
+            "App Start Time: <span style=\"color: blue;\">%s</span> <br>" +
+            "Cluster Environment: <span style=\"color: blue;\">%s</span> <br>" +
+            "Cluster Name: <span style=\"color: blue;\">%s</span>",
             ip.getHostAddress(),
             config.getVersion(),
             config.getStartTime().format(formatter),
