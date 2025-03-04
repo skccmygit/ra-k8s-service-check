@@ -13,3 +13,20 @@
 와 같은 기능이 있다.
 
 ![image](https://github.com/user-attachments/assets/a07b56c9-8457-40c7-81ae-c85b30771fc1)
+
+
+## 사용 방법
+
+1. 먼저 배포를 실행할 서버 또는 PC 에 helm 이 설치되어 있어야 한다. ( https://helm.sh/docs/intro/install/ )
+   
+        $ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        $ chmod 700 get_helm.sh
+        $ ./get_helm.sh 
+
+3. 다음 명령어 실행하여 압축파일 다운로드
+
+       curl -H "Authorization: token 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" -O https://raw.githubusercontent.com/skccmygit/ra-k8s-service-check/main/ra-k8s-service-check-helm.tar.gz
+
+4. 다운받은 파일 압축 해제
+
+       tar -xvzf ra-k8s-service-check-helm.tar.gz   
