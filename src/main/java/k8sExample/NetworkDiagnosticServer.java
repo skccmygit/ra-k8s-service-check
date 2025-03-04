@@ -107,7 +107,7 @@ public class NetworkDiagnosticServer {
 
 
     // Request DTO classes
-    class NetcatRequest {
+    static class NetcatRequest {
         private String ip;
         private String port;
         
@@ -117,14 +117,14 @@ public class NetworkDiagnosticServer {
         public void setPort(String port) { this.port = port; }
     }
 
-    class DnsRequest {
+    static class DnsRequest {
         private String url;
         
         public String getUrl() { return url; }
         public void setUrl(String url) { this.url = url; }
     }
 
-    class UrlRequest {
+    static class UrlRequest {
         private String url;
         
         public String getUrl() { return url; }
