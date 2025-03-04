@@ -18,6 +18,7 @@
 ## 사용 방법
 
 1. 먼저 배포를 실행할 서버 또는 PC 에 helm 이 설치되어 있어야 한다. ( https://helm.sh/docs/intro/install/ )
+   설치되어 있으면 아래 내용은 무시한다.
    
         $ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
         $ chmod 700 get_helm.sh
