@@ -4,7 +4,6 @@ target/
 *.jar
 *.war
 *.ear
-*.tar.gz
 *.rar
 
 # 로그 파일
