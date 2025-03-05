@@ -26,7 +26,7 @@
 
 3. 다음 명령어 실행하여 압축파일 다운로드
 
-       curl -H "Authorization: token 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" -O https://raw.githubusercontent.com/skccmygit/ra-k8s-service-check/main/ra-k8s-service-check-helm.tar.gz
+       curl -H "Authorization: token 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" -O https://raw.githubusercontent.com/skccmygit/ra-k8s-service-check/main/ra-k8s-service-check-helm.tar.gz
 
 4. 다운받은 파일 압축 해제
 
