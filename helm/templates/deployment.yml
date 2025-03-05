@@ -20,6 +20,8 @@ spec:
         redeployOnChange: {{ .Values.image.tag }}  
          
     spec:
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecret }}
       containers:
         - name: {{ .Values.fullnameOverride }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
