@@ -6,6 +6,7 @@ image:
   repository: 211125723149.dkr.ecr.ap-northeast-2.amazonaws.com/erpbss/sapbss-pjt-template
   pullPolicy: Always
   tag: 1.0.0-SNAPSHOT
+  pullSecret: acr-secret
 service:
   type: ClusterIP  # 일반적인 경우는 ClusterIP 로 설정해야 함. 본 경우는 포트 지정하는 특수한 경우의 예임
   port: 80
