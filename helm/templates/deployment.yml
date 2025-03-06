@@ -40,14 +40,4 @@ spec:
               value: {{ .Values.runtimeEnv }}
             - name: CLUSTER_NAME
               value: {{ .Values.clusterName }}
-            - name: db1_username
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.fullnameOverride }}
-                  key: db1_username  
-            - name: db1_password
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.fullnameOverride }}
-                  key: db1_password  
       terminationGracePeriodSeconds: 10

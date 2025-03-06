@@ -39,10 +39,6 @@ ingress:
   port: 80
   host: tools-dev.skcc.com
 
-secret:
-  data:
-    db1_username: YWRtaW4=
-    db1_password: MWYyZDFlMmU2N2Rm  
 
 nodeSelector: {}
 
