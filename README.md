@@ -32,4 +32,20 @@
 
        tar -xvzf ra-k8s-service-check-helm.tar.gz   
    
+5. 댜음 helm 명령어로 실행
+
+   이 때 --set 옵션으로 개별 환경에 맞게 적절히 수정할 수 있습니다.
    
+         helm upgrade --install k8s-service-check helm \
+          -f helm/values-dev.yaml \
+          --namespace default \
+          --set clusterName=skcc-newkm-dev-aks \
+          --set image.repository=ghcr.io/skccmygit/ra-k8s-service-check \
+          --set image.tag=1.0.0-snapshot.20250304 \
+          --set image.pullSecret=ghcr-secret \
+          --set ingress.host=tools-dev.skcc.com
+
+ 6. pod 구동 확인
+
+    ![image](https://github.com/user-attachments/assets/7dd7253a-1911-4a6e-9886-db1f54f7d57d)
+  
