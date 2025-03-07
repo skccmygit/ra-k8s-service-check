@@ -24,15 +24,18 @@
         $ chmod 700 get_helm.sh
         $ ./get_helm.sh 
 
-3. 다음 명령어 실행하여 압축파일 다운로드
+3. 본 레파지토리내 압축파일을 다운로드합니다.(하단 a-k8s-service-check-helm.tar.gz 파일 클릭 후 우측 ... 버튼 클릭하여 다운로드 진행)
+
+   ![image](https://github.com/user-attachments/assets/9919a31d-abe3-4fbe-8e9b-3e6aef98872d)
+
 
        curl -H "Authorization: token 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" -O https://raw.githubusercontent.com/skccmygit/ra-k8s-service-check/main/ra-k8s-service-check-helm.tar.gz
 
-4. 다운받은 파일 압축 해제
+5. 다운받은 파일 압축 해제
 
        tar -xvzf ra-k8s-service-check-helm.tar.gz   
    
-5. 댜음 helm 명령어로 실행
+6. 댜음 helm 명령어로 실행
 
    이 때 --set 옵션으로 개별 환경에 맞게 적절히 수정할 수 있습니다.
    
@@ -45,7 +48,7 @@
           --set image.pullSecret=ghcr-secret \
           --set ingress.host=tools-dev.skcc.com
 
- 6. pod 구동 확인
+ 7. pod 구동 확인
 
     ![image](https://github.com/user-attachments/assets/7dd7253a-1911-4a6e-9886-db1f54f7d57d)
   
