@@ -24,18 +24,18 @@
         $ chmod 700 get_helm.sh
         $ ./get_helm.sh 
 
-3. 본 레파지토리내 압축파일을 다운로드합니다.(하단 a-k8s-service-check-helm.tar.gz 파일 클릭 후 우측 ... 버튼 클릭하여 다운로드 진행)
+2. 본 레파지토리내 압축파일을 다운로드합니다.(하단 a-k8s-service-check-helm.tar.gz 파일 클릭 후 우측 ... 버튼 클릭하여 다운로드 진행)
 
    ![image](https://github.com/user-attachments/assets/9919a31d-abe3-4fbe-8e9b-3e6aef98872d)
 
+   ![image](https://github.com/user-attachments/assets/3a386f2f-8767-46f8-b31d-ed459d01d30a)
 
-       curl -H "Authorization: token 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" -O https://raw.githubusercontent.com/skccmygit/ra-k8s-service-check/main/ra-k8s-service-check-helm.tar.gz
 
-5. 다운받은 파일 압축 해제
+3. 다운받은 파일 압축 해제 - 압축 해제는 k8s 접근 및 명령을 실행 가능한 환경에서 수행합니다.
 
        tar -xvzf ra-k8s-service-check-helm.tar.gz   
    
-6. 댜음 helm 명령어로 실행
+4. 댜음 helm 명령어로 실행
 
    이 때 --set 옵션으로 개별 환경에 맞게 적절히 수정할 수 있습니다.
    
