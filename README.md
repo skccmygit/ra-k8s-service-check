@@ -37,7 +37,7 @@
    
 4. 댜음 helm 명령어로 실행
 
-   이 때 --set 옵션으로 개별 환경에 맞게 적절히 수정할 수 있습니다.
+   이 때 --set 옵션으로 개별 환경에 맞게 적절히 수정해서 배포합니다.
    
          helm upgrade --install k8s-service-check helm \
           -f helm/values-dev.yaml \
@@ -52,3 +52,6 @@
 
     ![image](https://github.com/user-attachments/assets/7dd7253a-1911-4a6e-9886-db1f54f7d57d)
   
+8. 브라우저 확인
+
+   브라우저에서 http(s)://*위에서 설정한 ingress-hosts-url*/checkutil 을 입력
