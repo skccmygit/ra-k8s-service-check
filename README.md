@@ -38,13 +38,14 @@
 4. 댜음 helm 명령어로 실행
 
    이 때 --set 옵션으로 개별 환경에 맞게 적절히 수정해서 배포합니다.
+   (이 경우는 k8s 에 ingress controller 가 설치된 경우이며, ingress 를 사용하지 않고 service를 직접 노출하는 경우는 적절히 수정해야 합니다.)
    
          helm upgrade --install k8s-service-check helm \
           -f helm/values-dev.yaml \
           --namespace default \
           --set clusterName=skcc-newkm-dev-aks \
           --set image.repository=ghcr.io/skccmygit/ra-k8s-service-check \
-          --set image.tag=1.0.0-snapshot.20250304 \
+          --set image.tag=latest \
           --set image.pullSecret=ghcr-secret \
           --set ingress.host=tools-dev.skcc.com
 
