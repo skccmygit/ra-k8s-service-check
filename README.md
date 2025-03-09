@@ -43,7 +43,7 @@
          helm upgrade --install k8s-service-check helm \
           -f helm/values-dev.yaml \
           --namespace default \
-          --set clusterName=_your cluster name_ \
+          --set clusterName=*yourClusterName* \
           --set image.repository=ghcr.io/skccmygit/ra-k8s-service-check \
           --set image.tag=latest \
           --set image.pullSecret=ghcr-secret \
