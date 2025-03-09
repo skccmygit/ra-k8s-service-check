@@ -38,7 +38,7 @@
 4. 댜음 helm 명령어로 실행
 
    이 때 --set 옵션으로 개별 환경에 맞게 적절히 수정해서 배포합니다.
-   (이 경우는 k8s 에 ingress controller 가 설치된 경우이며, ingress 를 사용하지 않고 service를 직접 노출하는 경우는 적절히 수정해야 합니다.)
+   (이 경우는 k8s 에 nginx ingress controller 가 설치되어 있고 루트 컨텍스트의 Ingress가 설정되어 있는 경우의 예시입니다. 그 외는 ingress 또는 service 파일을 환경에 맞게 적절히 수정해야 합니다.)
    
          helm upgrade --install k8s-service-check helm \
           -f helm/values-dev.yaml \
