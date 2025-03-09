@@ -43,11 +43,11 @@
          helm upgrade --install k8s-service-check helm \
           -f helm/values-dev.yaml \
           --namespace default \
-          --set clusterName=*yourClusterName* \
+          --set clusterName=yourClusterName \
           --set image.repository=ghcr.io/skccmygit/ra-k8s-service-check \
           --set image.tag=latest \
           --set image.pullSecret=ghcr-secret \
-          --set ingress.host=_your host url_
+          --set ingress.host=yourHostDomainName
 
  7. pod 구동 확인
 
