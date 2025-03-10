@@ -24,7 +24,7 @@ env:
 
 jobs:
   build-and-push:
-    runs-on: newkm-landscape-runner    # GitHub-hosted runner 사용
+    runs-on: newkm-selfhost    # GitHub-hosted runner 사용
     permissions:
       contents: write
       packages: write

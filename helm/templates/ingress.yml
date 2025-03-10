@@ -11,10 +11,7 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      proxy_set_header Upgrade $http_upgrade;
-      proxy_set_header Connection "upgrade";
-    nginx.ingress.kubernetes.io/websocket-services: {{ .Values.fullnameOverride }}
+    nginx.ingress.kubernetes.io/use-regex: "true"
   labels:
     app: {{ .Values.fullnameOverride }}
 spec:
