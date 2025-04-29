@@ -1,12 +1,8 @@
-# 기본 이미지 - JDK 17 사용
-FROM eclipse-temurin:17-jdk
+# 1단계: 기본 이미지 - Ubuntu + OpenJDK 17
+FROM openjdk:17-slim
 
-# Create non-root user 
-#RUN addgroup -S appuser && adduser -S -G appuser appuser
-RUN groupadd -r appuser && useradd -r -g appuser appuser
-
-# Install network tools 
-RUN apt-get update && apt-get install -y \
+# 네트워크 도구 설치
+RUN apt-get update && apt-get install -y --no-install-recommends \
     netcat \
     curl \
     dnsutils \
@@ -14,6 +10,8 @@ RUN apt-get update && apt-get install -y \
     net-tools \
  && rm -rf /var/lib/apt/lists/*
 
+# Create non-root user
+RUN groupadd -r appuser && useradd -r -g appuser appuser
 
 # 작업 디렉토리 설정
 WORKDIR /app
@@ -21,11 +19,15 @@ WORKDIR /app
 # JAR 파일 복사
 COPY target/*.jar app.jar
 
-# Set ownership and switch user
+# 소유권 설정 및 user 변경
 RUN chown appuser:appuser app.jar
 USER appuser
 
+# 포트 노출
 EXPOSE 4567
 
 # 애플리케이션 실행
-ENTRYPOINT ["java", "--add-opens", "java.base/java.io=ALL-UNNAMED", "-jar", "app.jar"]
+ENTRYPOINT ["java", "--add-opens=java.base/java.io=ALL-UNNAMED", "-jar", "app.jar"]
+
+
+
