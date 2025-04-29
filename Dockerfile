@@ -25,4 +25,4 @@ USER appuser
 EXPOSE 4567
 
 # 애플리케이션 실행
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "--add-opens", "java.base/java.io=ALL-UNNAMED", "-jar", "app.jar"]
