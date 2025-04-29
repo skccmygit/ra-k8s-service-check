@@ -5,13 +5,15 @@ FROM eclipse-temurin:17-jdk
 #RUN addgroup -S appuser && adduser -S -G appuser appuser
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 
-# Install network tools (Alpine 패키지 관리자 사용)
-RUN apk update && apk add --no-cache \
-    netcat-openbsd \
+# Install network tools 
+RUN apt-get update && apt-get install -y \
+    netcat \
     curl \
-    bind-tools \
-    iputils \
-    net-tools
+    dnsutils \
+    iputils-ping \
+    net-tools \
+ && rm -rf /var/lib/apt/lists/*
+
 
 # 작업 디렉토리 설정
 WORKDIR /app
