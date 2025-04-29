@@ -1,5 +1,5 @@
 # 기본 이미지 - JDK 17 사용
-FROM eclipse-temurin:17-jdk-alpine
+FROM eclipse-temurin:17-jdk
 
 # Create non-root user (Alpine 방식으로 수정)
 RUN addgroup -S appuser && adduser -S -G appuser appuser
