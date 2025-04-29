@@ -1,16 +1,17 @@
-# 기본 이미지 - JDK 17 사용
-FROM eclipse-temurin:17-jdk-alpine
+# 1단계: 기본 이미지 - Ubuntu + OpenJDK 17
+FROM openjdk:17-slim
 
-# Create non-root user (Alpine 방식으로 수정)
-RUN addgroup -S appuser && adduser -S -G appuser appuser
-
-# Install network tools (Alpine 패키지 관리자 사용)
-RUN apk update && apk add --no-cache \
-    netcat-openbsd \
+# 네트워크 도구 설치
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    netcat \
     curl \
-    bind-tools \
-    iputils \
-    net-tools
+    dnsutils \
+    iputils-ping \
+    net-tools \
+ && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user
+RUN groupadd -r appuser && useradd -r -g appuser appuser
 
 # 작업 디렉토리 설정
 WORKDIR /app
@@ -18,11 +19,15 @@ WORKDIR /app
 # JAR 파일 복사
 COPY target/*.jar app.jar
 
-# Set ownership and switch user
+# 소유권 설정 및 user 변경
 RUN chown appuser:appuser app.jar
 USER appuser
 
+# 포트 노출
 EXPOSE 4567
 
 # 애플리케이션 실행
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "--add-opens=java.base/java.io=ALL-UNNAMED", "-jar", "app.jar"]
+
+
+
