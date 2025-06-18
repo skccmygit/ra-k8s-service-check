@@ -29,10 +29,10 @@
 
 2. 본 레파지토리내 압축파일을 다운로드합니다.(하단 a-k8s-service-check-helm.tar.gz 파일 클릭 후 우측 ... 버튼 클릭하여 다운로드 진행)
 
-   ![image](https://github.com/user-attachments/assets/9919a31d-abe3-4fbe-8e9b-3e6aef98872d)
-
-   ![image](https://github.com/user-attachments/assets/3a386f2f-8767-46f8-b31d-ed459d01d30a)
-
+<p align="center">
+  <img src="./k8s-service-check-1.png" alt="상세 화면" width="800"/>
+  <img src="./k8s-service-check-2.png" alt="상세 화면2" width="800"/>
+</p>
 
 3. 다운받은 파일 압축 해제 - 압축 해제는 k8s 접근 및 명령을 실행 가능한 환경에서 수행합니다.
 
@@ -54,7 +54,9 @@
 
  7. pod 구동 확인
 
-    ![image](https://github.com/user-attachments/assets/7dd7253a-1911-4a6e-9886-db1f54f7d57d)
+<p align="center">
+  <img src="./k8s-service-check-3.png" alt="상세 화면" width="800"/>
+</p>
   
 8. 브라우저 확인
 
