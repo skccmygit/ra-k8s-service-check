@@ -12,7 +12,10 @@
 
 와 같은 기능이 있다.
 
-![image](https://github.com/user-attachments/assets/a07b56c9-8457-40c7-81ae-c85b30771fc1)
+### 주요 화면 스크린샷
+<p align="center">
+  <img src="./k8s-service-check.png" alt="주 화면" width="800"/>
+</p>
 
 
 ## 사용 방법
