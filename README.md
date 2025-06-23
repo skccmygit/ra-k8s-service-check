@@ -29,6 +29,10 @@
 
 2. 본 레파지토리내 압축파일을 다운로드합니다.(하단 a-k8s-service-check-helm.tar.gz 파일 클릭 후 우측 ... 버튼 클릭하여 다운로드 진행)
 
+   * 또는 아래 주소로 직접 다운로드 수행
+     
+           curl -LO https://github.com/skccmygit/ra-k8s-service-check/raw/refs/heads/main/ra-k8s-service-check-helm.tar.gz
+
 <p align="center">
   <img src="./k8s-service-check-1.png" alt="상세 화면" width="800"/>
   <img src="./k8s-service-check-2.png" alt="상세 화면2" width="800"/>
